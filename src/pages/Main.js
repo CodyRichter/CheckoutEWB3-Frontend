@@ -16,30 +16,74 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 import CloseIcon from '@material-ui/icons/Close';
+import Chip from "@material-ui/core/Chip";
+import AddIcon from '@material-ui/icons/Add';
 
 export default function App() {
 
     let [items, setItems] = useState([
-        {name: 'itemA', description: 'foo bar a', bid: 0.1},
-        {name: 'itemB', description: 'foo bar b', bid: 10.5},
-        {name: 'itemC', description: 'foo bar c', bid: 15.2},
-        {name: 'itemD', description: 'foo bar d', bid: 21.3},
-        ]);
+        {name: 'Kenyan Bowl', tags: ['Kenya'], description: 'A wonderful handmade Maasai salad bowl', image: 'https://material-ui.com/static/images/cards/contemplative-reptile.jpg', bid: 0.1},
+        {name: 'Ghanaian Tongs', tags: ['Ghana'], description: 'For your salad. Need I say more?', image: 'https://material-ui.com/static/images/cards/contemplative-reptile.jpg', bid: 10.5},
+        {name: 'Piri Piri Collection', tags: ['Kenya'], description: 'A delicious collection of piri piri peppers', image: 'https://material-ui.com/static/images/cards/contemplative-reptile.jpg', bid: 15.2},
+        {name: '$50 Chipotle Gift Card', tags: ['Amherst', 'Donated'], description: 'This is more than we ever got from our Chipotle fundraisers...', image: 'https://material-ui.com/static/images/cards/contemplative-reptile.jpg', bid: 21.3},
+
+    ]);
+
+    let [tags, setTags] = useState(['Kenya', 'Ghana', 'Amherst', 'Donated']);
+    let [searchTags, setSearchTags] = useState([]);
 
     let [backdropOpen, setBackdropOpen] = useState(false);
 
+    function toggleTag(tag) {
+        let newSearchTags = [...searchTags];
+        if (newSearchTags.includes(tag)) {  // Remove tag if in list
+            newSearchTags.splice(newSearchTags.indexOf(tag), 1);
+        } else {  // Add tag if not already in list
+            newSearchTags.push(tag);
+        }
+        setSearchTags(newSearchTags);
+    }
+
+    function matchTagFilter(item) {
+        if (searchTags.length <= 0) {
+            return true;
+        }
+        return searchTags.some(r=> item.tags.includes(r))
+    }
 
     return (
         <Container>
-            <Grid container spacing={4} style={{marginTop: '1vh'}}>
+            <Grid container spacing={4} style={{marginTop: '1vh'}} alignItems="stretch">
 
-                {items.map( (item) =>
-                    <Grid item xs={4}>
+                <Grid item xs={12}>
+                    <Card variant={'outlined'}>
+                        <CardContent>
+                            <Typography variant={'h6'}>
+                                Filter Auction Items
+                            </Typography>
+
+                            {tags.map((tag, i) =>
+                                <Chip
+                                    style={{marginRight: 8}}
+                                    label={tag}
+                                    clickable
+                                    onClick={() => toggleTag(tag)}
+                                    color={searchTags.includes(tag) ? 'secondary' : 'primary'}
+                                    icon={searchTags.includes(tag) ?  <CloseIcon /> : <AddIcon />}
+                                    key={i}
+                                />
+                            )}
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                {items.filter((item) => matchTagFilter(item)).map( (item, index) =>
+                    <Grid item xs={4} key={index}>
                         <Card>
                             <CardActionArea>
                                 <CardMedia
                                     style={{height: '20vh'}}
-                                    image="https://material-ui.com/static/images/cards/contemplative-reptile.jpg"
+                                    image={item.image}
                                     title="Contemplative Reptile"
                                 />
                                 <CardContent>

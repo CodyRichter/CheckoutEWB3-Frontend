@@ -10,7 +10,7 @@ export default function WebsiteHeader() {
         <AppBar position="static" elevation={0}>
             <Toolbar>
                 <Typography variant="h6">
-                    EWB Auction Online 2021
+                    UMass Amherst Engineers Without Borders - 2021 Spring Auction
                 </Typography>
             </Toolbar>
         </AppBar>
