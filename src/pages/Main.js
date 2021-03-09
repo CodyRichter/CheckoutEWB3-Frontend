@@ -126,11 +126,11 @@ export default function Main(props) {
 
                 {items.filter((item) => matchTagFilter(item)).map( (item, index) =>
                     <Grid item xs={4} key={index}>
-                        <Card>
+                        <Card elevation={5}>
                             <CardMedia
                                 style={{height: '30vh'}}
                                 image={item.image}
-                                title="Contemplative Reptile"
+                                title="Auction Item"
                             />
                             <CardContent>
                                 <Typography gutterBottom variant="h5" component="h2">
@@ -149,7 +149,14 @@ export default function Main(props) {
                         </Card>
                     </Grid>
                 )}
+                <Grid item xs={12} style={{paddingTop: '1em'}}>
+                    <Typography variant="subtitle1">
+                        Website created by <a target='_blank' rel='noreferrer' href='https://www.linkedin.com/in/Cody-Richter'>Cody Richter</a>.
+                        This auction webpage is open source and available to view <a rel='noreferrer' target='_blank' href='https://github.com/CodyRichter/CheckoutEWB3-Frontend'>on Github</a>.
+                    </Typography>
+                </Grid>
             </Grid>
+
 
             <Dialog maxWidth={"md"} fullWidth open={itemDialogOpen} onClose={cancelBid}>
 
