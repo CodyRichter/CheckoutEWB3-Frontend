@@ -19,11 +19,14 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import {AttachMoney} from "@material-ui/icons";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from '@material-ui/lab/Alert';
+import axios from "axios";
+
+const defaultBidDelta = 3;
 
 export default function Main(props) {
 
     let [items, setItems] = useState([]);
-    let [currentItem, setCurrentItem] = useState({name: '', tags: [], description: '', bid: '', image: ''});
+    let [currentItem, setCurrentItem] = useState({name: '', tags: [], description: '', bid: '', image: '', bid_name: '', original_bid: ''});
 
     let [tags, setTags] = useState([]);
     let [searchTags, setSearchTags] = useState([]);
@@ -34,26 +37,33 @@ export default function Main(props) {
 
     let [successTagOpen, setSuccessTagOpen] = useState(false);
     let [failureTagOpen, setFailureTagOpen] = useState(false);
+    let [failureTagMessage, setFailureTagMessage] = useState('');
 
 
     useEffect(() => {
 
-        let itemsFromServer = [
-            {name: 'Kenyan Bowl', tags: ['Kenya'], description: 'A wonderful handmade Maasai salad bowl', image: 'https://cdn20.pamono.com/p/g/5/0/506188_3zfnpi2eio/vintage-japanese-bowl-by-kei-fujiwara-1960s-1.jpg', bid: 0.1},
-            {name: 'Ghanaian Tongs', tags: ['Ghana'], description: 'For your salad. Need I say more?', image: 'https://www.ubuy.com.gh/productimg/?image=aHR0cHM6Ly9pbWFnZXMtbmEuc3NsLWltYWdlcy1hbWF6b24uY29tL2ltYWdlcy9JLzUxc2J0aW5CdGRMLl9TUzQwMF8uanBn.jpg', bid: 10.5},
-            {name: 'Piri Piri Collection', tags: ['Kenya'], description: 'A delicious collection of piri piri peppers', image: 'https://images.ricardocuisine.com/services/recipes/1074x1074_3621-background.jpg', bid: 15.2},
-            {name: '$50 Chipotle Gift Card', tags: ['Amherst', 'Donated'], description: 'This is more than we ever got from our Chipotle fundraisers...', image: 'https://www.nrn.com/sites/nrn.com/files/styles/article_featured_standard/public/chipotle_5.gif?itok=Irzzw2re', bid: 21.3},
-        ];
+        // let itemsFromServer = [
+        //     {"name": "Kenyan Bowl", "tags": ["Kenya"], "description": "A wonderful handmade Maasai salad bowl", "image": "https://cdn20.pamono.com/p/g/5/0/506188_3zfnpi2eio/vintage-japanese-bowl-by-kei-fujiwara-1960s-1.jpg", "bid": 15, "bid_name": "No Bids Placed"},
+        //     {"name": "Ghanaian Tongs", "tags": ["Ghana"], "description": "For your salad. Need I say more?", "image": "https://www.ubuy.com.gh/productimg/?image=aHR0cHM6Ly9pbWFnZXMtbmEuc3NsLWltYWdlcy1hbWF6b24uY29tL2ltYWdlcy9JLzUxc2J0aW5CdGRMLl9TUzQwMF8uanBn.jpg", "bid": 10.5, "bid_name": "No Bids Placed"},
+        //     {"name": "Piri Piri Collection", "tags": ["Kenya"], "description": "A delicious collection of piri piri peppers", "image": "https://images.ricardocuisine.com/services/recipes/1074x1074_3621-background.jpg", "bid": 15.2, "bid_name": "No Bids Placed"},
+        //     {"name": "$50 Chipotle Gift Card", "tags": ["Amherst", "Donated"], "description": "This is more than we ever got from our Chipotle fundraisers...", "image": "https://www.nrn.com/sites/nrn.com/files/styles/article_featured_standard/public/chipotle_5.gif?itok=Irzzw2re", "bid": 21.3, "bid_name": "No Bids Placed"},
+        // ];
 
-        setItems(itemsFromServer);
+        axios.get('http://localhost:4250/items').then((res) => {
 
-        // Gets unique tags from all items for the search filter
-        let x = itemsFromServer.map((serverItemObj, idx) => {
-            return serverItemObj['tags'];
-        });
-        let uniqueTagsFromItems = Array.from(new Set([].concat.apply([], x)));
-        setTags(uniqueTagsFromItems);
+            let itemsFromServer = res.data;
+            setItems(itemsFromServer);
 
+
+            // Gets unique tags from all items for the search filter
+            let x = itemsFromServer.map((serverItemObj, idx) => {
+                return serverItemObj['tags'];
+            });
+            let uniqueTagsFromItems = Array.from(new Set([].concat.apply([], x)));
+            setTags(uniqueTagsFromItems);
+        }).catch((e) => {
+            console.log('Unable to load items!')
+        })
 
     }, [])
 
@@ -77,25 +87,83 @@ export default function Main(props) {
     }
 
     function selectItemToOpen(item) {
-        setCurrentItem(item);
-        setItemDialogOpen(true);
+        axios.get('http://localhost:4250/item',
+            {params: {'item_name': item.name}
+        }).then((res) => {
+
+            let itemFromServer = res.data;
+            setCurrentItem(itemFromServer);
+            setItemDialogOpen(true);
+            setBidAmount(itemFromServer.bid + defaultBidDelta);
+
+        }).catch((e) => {
+            console.log('Unable to load item from server!')
+        })
     }
 
     function placeBid() {
-        // TODO: Place Bid With Server
         if (isNaN(bidAmount)) {
             setFailureTagOpen(true);
+            setFailureTagMessage('Unable to place bid. Please ensure bid is a valid number.');
             return;
         }
-        console.log(bidAmount);
-        setSuccessTagOpen(true);
-        setBidAmount(0);
-        setItemDialogOpen(false);
+
+        axios.post('http://localhost:4250/bid', {
+            'first_name': props.user.first_name,
+            'last_name': props.user.last_name,
+            'email': props.user.email,
+            'item_name': currentItem.name,
+            'bid': bidAmount
+        }).then((res) => {
+
+            let bidInfo = res.data;
+
+            if (bidInfo['status'] === 'failure') {
+                setFailureTagOpen(true);
+                setFailureTagMessage(bidInfo['detail']);
+                axios.get('http://localhost:4250/item',
+                    {params: {'item_name': currentItem.name}
+                    }).then((res) => {
+
+                    let itemFromServer = res.data;
+                    setCurrentItem(itemFromServer);
+
+                }).catch((e) => {
+                    console.log('Unable to load item from server (2)!')
+                })
+            } else {
+                axios.get('http://localhost:4250/items').then((res) => {
+                    let itemsFromServer = res.data;
+                    setItems(itemsFromServer);
+                });
+
+                setSuccessTagOpen(true);
+                setBidAmount(0);
+                setItemDialogOpen(false);
+            }
+
+        }).catch((e) => {
+            setFailureTagOpen(true);
+            setFailureTagMessage('Unable to place bid. Please try again in a minute.');
+        });
     }
 
     function cancelBid() {
         setBidAmount(0);
         setItemDialogOpen(false);
+    }
+
+    const bidOnEnterPress = (event) => {
+        if (event.key === 'Enter' && itemDialogOpen) {
+            placeBid();
+        }
+    }
+
+    function truncateString(str, num) {
+        if (str.length <= num) {
+            return str
+        }
+        return str.slice(0, num) + '...'
     }
 
     return (
@@ -136,14 +204,24 @@ export default function Main(props) {
                                 <Typography gutterBottom variant="h5" component="h2">
                                     {item.name}
                                 </Typography>
+
                                 <Typography variant='body1'>Current Bid: ${parseFloat(item.bid).toFixed(2)}</Typography>
+
+                                {item.bid === item.original_bid ?
+                                    <Typography variant={'body2'} color={'primary'}>No Bids Placed Yet</Typography>
+                                    :
+                                    <Typography variant={'body2'} color={'secondary'}>{item.bid_name} is the highest bidder</Typography>
+                                }
+
+                                <Divider style={{marginTop: '1em', marginBottom: '1em'}} />
+
                                 <Typography variant="body2" color="textSecondary" component="p">
-                                    {item.description}
+                                    {truncateString(item.description, 60)}
                                 </Typography>
                             </CardContent>
                             <CardActions>
                                 <Button size="small" color="secondary" variant="contained" onClick={() => selectItemToOpen(item)}>
-                                    Learn More
+                                    Place Bid
                                 </Button>
                             </CardActions>
                         </Card>
@@ -166,15 +244,21 @@ export default function Main(props) {
                         {currentItem.description}
                     </DialogContentText>
                     <Divider />
-                    <Typography style={{marginTop: '1em', marginBottom: '1em'}} variant={'body1'}>Current Bid: ${parseFloat(currentItem.bid).toFixed(2)}</Typography>
+                    <Typography style={{marginTop: '1em'}} variant={'body1'}>Current Bid: ${parseFloat(currentItem.bid).toFixed(2)}</Typography>
+                    {currentItem.bid === currentItem.original_bid ?
+                        <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'primary'}>No Bids Placed Yet</Typography>
+                        :
+                        <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'secondary'}>{currentItem.bid_name} is the highest bidder</Typography>
+                    }
 
                     <TextField
                         autoFocus
                         margin="dense"
                         id="newBid"
                         label="Place New Bid"
-                        defaultValue={currentItem.bid + 2}
+                        defaultValue={currentItem.bid + defaultBidDelta}
                         type="text"
+                        onKeyDown={bidOnEnterPress}
                         onChange={(e) => setBidAmount(parseFloat(e.target.value))}
                         InputProps={{
                             startAdornment: (
@@ -206,7 +290,7 @@ export default function Main(props) {
 
             <Snackbar open={failureTagOpen} autoHideDuration={6000} onClose={() => setFailureTagOpen(false)} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
                 <MuiAlert elevation={6} variant="filled" onClose={() => setFailureTagOpen(false)} severity="error">
-                    Unable to place bid. Please ensure bid is a valid number.
+                    {failureTagMessage}
                 </MuiAlert>
             </Snackbar>
 

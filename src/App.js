@@ -19,9 +19,10 @@ const theme = createMuiTheme({
 function App() {
 
     let [currentUser, setCurrentUser] = useState({
-        authenticated: true,
-        name: 'John Doe',
-        key: 'abc123'
+        authenticated: localStorage.getItem('firstName') !== null && localStorage.getItem('lastName') !== null && localStorage.getItem('email') !== null,
+        first_name: localStorage.getItem('firstName') !== null ? localStorage.getItem('firstName') : '',
+        last_name: localStorage.getItem('lastName') !== null ? localStorage.getItem('lastName') : '',
+        email: localStorage.getItem('email') !== null ? localStorage.getItem('email') : '',
     })
 
   return (
