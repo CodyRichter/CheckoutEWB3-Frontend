@@ -83,7 +83,7 @@ export default function Main(props) {
         if (searchTags.length <= 0) {
             return true;
         }
-        return searchTags.some(r=> item.tags.includes(r))
+        return searchTags.every(r=> item.tags.includes(r))
     }
 
     function selectItemToOpen(item) {
@@ -168,7 +168,7 @@ export default function Main(props) {
 
     return (
         <Container>
-            <Grid container spacing={4} style={{marginTop: '1vh'}} alignItems="stretch">
+            <Grid container spacing={4} style={{marginTop: '1vh'}} alignItems="stretch" direction={"row"}>
 
                 <Grid item xs={12}>
                     <Card variant={'outlined'}>
@@ -192,13 +192,31 @@ export default function Main(props) {
                     </Card>
                 </Grid>
 
+                {items.filter((item) => matchTagFilter(item)).length === 0 &&
+                <Grid item xs={12} >
+                    <Card elevation={1}>
+                        <CardContent>
+                            <Typography variant="h4" component="h4">
+                                No auction items matching search criteria found
+                            </Typography>
+                            <Typography variant="body1" component="p">
+                                The search function uses an AND filter. This means that it will search for items that
+                                match all of the selected tags. For example, if your selected tags
+                                are <strong>Kenya</strong> and <strong>Donated</strong>, it will search for items
+                                from Kenya that have been donated.
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                }
+
                 {items.filter((item) => matchTagFilter(item)).map( (item, index) =>
                     <Grid item xs={4} key={index}>
                         <Card elevation={5}>
                             <CardMedia
                                 style={{height: '30vh'}}
                                 image={item.image}
-                                title="Auction Item"
+                                title={'Picture of ' + item.name}
                             />
                             <CardContent>
                                 <Typography gutterBottom variant="h5" component="h2">
@@ -216,7 +234,7 @@ export default function Main(props) {
                                 <Divider style={{marginTop: '1em', marginBottom: '1em'}} />
 
                                 <Typography variant="body2" color="textSecondary" component="p">
-                                    {truncateString(item.description, 60)}
+                                    {truncateString(item.description, 50)}
                                 </Typography>
                             </CardContent>
                             <CardActions>
@@ -230,7 +248,11 @@ export default function Main(props) {
                 <Grid item xs={12} style={{paddingTop: '1em'}}>
                     <Typography variant="subtitle1">
                         Website created by <a target='_blank' rel='noreferrer' href='https://www.linkedin.com/in/Cody-Richter'>Cody Richter</a>.
-                        This auction webpage is open source and available to view <a rel='noreferrer' target='_blank' href='https://github.com/CodyRichter/CheckoutEWB3-Frontend'>on Github</a>.
+                        This auction webpage is open source and available to view on Github.
+                        &nbsp;
+                        <a rel='noreferrer' target='_blank' href='https://github.com/CodyRichter/CheckoutEWB3-Frontend'>[Client]</a>
+                        &nbsp; &nbsp;
+                        <a rel='noreferrer' target='_blank' href='https://github.com/CodyRichter/CheckoutEWB3-Backend'>[Server]</a>
                     </Typography>
                 </Grid>
             </Grid>
