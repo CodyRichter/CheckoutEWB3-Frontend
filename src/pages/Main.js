@@ -49,7 +49,7 @@ export default function Main(props) {
         //     {"name": "$50 Chipotle Gift Card", "tags": ["Amherst", "Donated"], "description": "This is more than we ever got from our Chipotle fundraisers...", "image": "https://www.nrn.com/sites/nrn.com/files/styles/article_featured_standard/public/chipotle_5.gif?itok=Irzzw2re", "bid": 21.3, "bid_name": "No Bids Placed"},
         // ];
 
-        axios.get('http://localhost:4250/items').then((res) => {
+        axios.get('https://checkoutewb-backend.herokuapp.com/items').then((res) => {
 
             let itemsFromServer = res.data;
             setItems(itemsFromServer);
@@ -87,7 +87,7 @@ export default function Main(props) {
     }
 
     function selectItemToOpen(item) {
-        axios.get('http://localhost:4250/item',
+        axios.get('https://checkoutewb-backend.herokuapp.com/item',
             {params: {'item_name': item.name}
         }).then((res) => {
 
@@ -108,7 +108,7 @@ export default function Main(props) {
             return;
         }
 
-        axios.post('http://localhost:4250/bid', {
+        axios.post('https://checkoutewb-backend.herokuapp.com/bid', {
             'first_name': props.user.first_name,
             'last_name': props.user.last_name,
             'email': props.user.email,
@@ -121,7 +121,7 @@ export default function Main(props) {
             if (bidInfo['status'] === 'failure') {
                 setFailureTagOpen(true);
                 setFailureTagMessage(bidInfo['detail']);
-                axios.get('http://localhost:4250/item',
+                axios.get('https://checkoutewb-backend.herokuapp.com/item',
                     {params: {'item_name': currentItem.name}
                     }).then((res) => {
 
@@ -132,7 +132,7 @@ export default function Main(props) {
                     console.log('Unable to load item from server (2)!')
                 })
             } else {
-                axios.get('http://localhost:4250/items').then((res) => {
+                axios.get('https://checkoutewb-backend.herokuapp.com/items').then((res) => {
                     let itemsFromServer = res.data;
                     setItems(itemsFromServer);
                 });
