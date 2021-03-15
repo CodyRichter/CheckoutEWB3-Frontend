@@ -228,7 +228,10 @@ export default function Main(props) {
                                 {item.bid === item.original_bid ?
                                     <Typography variant={'body2'} color={'primary'}>No Bids Placed Yet</Typography>
                                     :
-                                    <Typography variant={'body2'} color={'secondary'}>{item.bid_name} is the highest bidder</Typography>
+                                    item.bid_name === props.user.first_name + ' ' + props.user.last_name ?
+                                        <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'secondary'}>You are the highest bidder</Typography>
+                                        :
+                                        <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'primary'}>Someone else is the highest bidder</Typography>
                                 }
 
                                 <Divider style={{marginTop: '1em', marginBottom: '1em'}} />
@@ -270,8 +273,12 @@ export default function Main(props) {
                     {currentItem.bid === currentItem.original_bid ?
                         <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'primary'}>No Bids Placed Yet</Typography>
                         :
-                        <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'secondary'}>{currentItem.bid_name} is the highest bidder</Typography>
+                        currentItem.bid_name === props.user.first_name + ' ' + props.user.last_name ?
+                            <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'secondary'}>You are the highest bidder</Typography>
+                            :
+                            <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'primary'}>Someone else is the highest bidder</Typography>
                     }
+
 
                     <TextField
                         autoFocus
