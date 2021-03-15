@@ -1,7 +1,7 @@
 {
   "name": "ewbauction-frontend",
   "version": "0.1.0",
-  "homepage": "http://codyrichter.github.io/ewbauction-frontend",
+  "homepage": "https://codyrichter.github.io/checkoutewb3-frontend",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.2",
