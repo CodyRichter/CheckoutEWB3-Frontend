@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.js": "/ewbauction-frontend/static/js/main.d69fe45d.chunk.js",
+    "main.js.map": "/ewbauction-frontend/static/js/main.d69fe45d.chunk.js.map",
+    "runtime-main.js": "/ewbauction-frontend/static/js/runtime-main.a7102ebd.js",
+    "runtime-main.js.map": "/ewbauction-frontend/static/js/runtime-main.a7102ebd.js.map",
+    "static/js/2.ea2639fb.chunk.js": "/ewbauction-frontend/static/js/2.ea2639fb.chunk.js",
+    "static/js/2.ea2639fb.chunk.js.map": "/ewbauction-frontend/static/js/2.ea2639fb.chunk.js.map",
+    "static/js/3.2076be43.chunk.js": "/ewbauction-frontend/static/js/3.2076be43.chunk.js",
+    "static/js/3.2076be43.chunk.js.map": "/ewbauction-frontend/static/js/3.2076be43.chunk.js.map",
+    "index.html": "/ewbauction-frontend/index.html",
+    "static/js/2.ea2639fb.chunk.js.LICENSE.txt": "/ewbauction-frontend/static/js/2.ea2639fb.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a7102ebd.js",
+    "static/js/2.ea2639fb.chunk.js",
+    "static/js/main.d69fe45d.chunk.js"
+  ]
+}
