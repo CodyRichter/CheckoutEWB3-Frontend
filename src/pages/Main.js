@@ -67,6 +67,9 @@ export default function Main(props) {
 
     }, [])
 
+    useEffect(() => {
+        console.log(bidAmount)
+    }, [bidAmount])
 
 
     function toggleTag(tag) {
@@ -94,7 +97,12 @@ export default function Main(props) {
             let itemFromServer = res.data;
             setCurrentItem(itemFromServer);
             setItemDialogOpen(true);
-            setBidAmount(itemFromServer.bid + defaultBidDelta);
+
+            if (itemFromServer.bid === itemFromServer.original_bid && itemFromServer.bid_name === 'No bids placed.') {
+                setBidAmount(itemFromServer.bid);
+            } else {
+                setBidAmount(itemFromServer.bid + defaultBidDelta);
+            }
 
         }).catch((e) => {
             console.log('Unable to load item from server!')
@@ -228,8 +236,8 @@ export default function Main(props) {
 
                                 <Typography variant='body1'>Current Bid: ${parseFloat(item.bid).toFixed(2)}</Typography>
 
-                                {item.bid === item.original_bid ?
-                                    <Typography variant={'body2'} color={'primary'}>No Bids Placed Yet</Typography>
+                                {item.bid === item.original_bid && item.bid_name === 'No bids placed.' ?
+                                    <Typography variant={'body2'} style={{color: 'darkgray'}}>No Bids Placed Yet</Typography>
                                     :
                                     item.bid_name === props.user.first_name + ' ' + props.user.last_name ?
                                         <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'secondary'}>You are the highest bidder</Typography>
@@ -278,8 +286,8 @@ export default function Main(props) {
                     </DialogContentText>
                     <Divider />
                     <Typography style={{marginTop: '1em'}} variant={'body1'}>Current Bid: ${parseFloat(currentItem.bid).toFixed(2)}</Typography>
-                    {currentItem.bid === currentItem.original_bid ?
-                        <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'primary'}>No Bids Placed Yet</Typography>
+                    {currentItem.bid === currentItem.original_bid && currentItem.bid_name === 'No bids placed.' ?
+                        <Typography style={{marginBottom: '1em', color: 'darkgray'}} variant={'body2'}>No Bids Placed Yet</Typography>
                         :
                         currentItem.bid_name === props.user.first_name + ' ' + props.user.last_name ?
                             <Typography style={{marginBottom: '1em'}} variant={'body2'} color={'secondary'}>You are the highest bidder</Typography>
@@ -293,7 +301,11 @@ export default function Main(props) {
                         margin="dense"
                         id="newBid"
                         label="Place New Bid"
-                        defaultValue={currentItem.bid + defaultBidDelta}
+                        defaultValue={
+                            currentItem.bid === currentItem.original_bid && currentItem.bid_name === 'No bids placed.' ?
+                                currentItem.bid :
+                                currentItem.bid + defaultBidDelta
+                        }
                         type="text"
                         onKeyDown={bidOnEnterPress}
                         onChange={(e) => setBidAmount(parseFloat(e.target.value))}
