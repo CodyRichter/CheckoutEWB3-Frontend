@@ -1,7 +1,7 @@
 {
   "name": "ewbauction-frontend",
   "version": "0.1.0",
-  "homepage": "https://auction.ewbumass.org",
+  "homepage": "https://auction.ewbumass.org/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.2",

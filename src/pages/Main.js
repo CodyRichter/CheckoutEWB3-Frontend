@@ -21,12 +21,12 @@ import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from "axios";
 
-const defaultBidDelta = 3;
+const defaultBidDelta = 2;
 
 export default function Main(props) {
 
     let [items, setItems] = useState([]);
-    let [currentItem, setCurrentItem] = useState({name: '', tags: [], description: '', bid: '', image: '', bid_name: '', original_bid: ''});
+    let [currentItem, setCurrentItem] = useState({name: '', tags: [], description: '', bid: '', image: '', additional_images: '', bid_name: '', original_bid: ''});
 
     let [tags, setTags] = useState([]);
     let [searchTags, setSearchTags] = useState([]);
@@ -214,10 +214,13 @@ export default function Main(props) {
                     <Grid item xs={4} key={index}>
                         <Card elevation={5}>
                             <CardMedia
-                                style={{height: '30vh'}}
-                                image={item.image}
                                 title={'Picture of ' + item.name}
-                            />
+                            >
+                                <img src={item.image} alt={item.description} style={{
+                                    maxWidth: '100%',
+                                    height: 'auto'
+                                }} />
+                            </CardMedia>
                             <CardContent>
                                 <Typography gutterBottom variant="h5" component="h2">
                                     {item.name}
@@ -241,6 +244,11 @@ export default function Main(props) {
                                 </Typography>
                             </CardContent>
                             <CardActions>
+                                {item.additional_images !== '' &&
+                                <Button size="small" color="secondary" variant="outlined"  target="_blank" href={item.additional_images}>
+                                    More Photos
+                                </Button>
+                                }
                                 <Button size="small" color="secondary" variant="contained" onClick={() => selectItemToOpen(item)}>
                                     Place Bid
                                 </Button>
