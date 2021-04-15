@@ -38,11 +38,10 @@ export default function WebsiteHeader(props) {
     function checkBidStatus() {
         setBidOpenLoading(true);
         setBidDialogOpen(true);
-        axios.get('https://auction.ewbumass.org/bids/user', {
+        axios.get('https://checkoutewb-backend.herokuapp.com/bids/user/', {
             params: {
                 'first_name': props.user.first_name,
                 'last_name': props.user.last_name,
-                'email': props.user.email,
         }}).then((res) => {
             let bidInfo = res.data;
             setBids(bidInfo);
