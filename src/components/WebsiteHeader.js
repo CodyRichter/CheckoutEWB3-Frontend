@@ -1,18 +1,23 @@
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import {Divider} from "@material-ui/core";
+import {Divider, Table, TableBody, TableContainer} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import {Mail} from "@material-ui/icons";
+import {ExitToApp, Mail, MenuBook} from "@material-ui/icons";
 import DialogActions from "@material-ui/core/DialogActions";
 import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import axios from "axios";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
 
 
 export default function WebsiteHeader(props) {
@@ -26,6 +31,27 @@ export default function WebsiteHeader(props) {
     let [lastNameError, setLastNameError] = useState(false);
     let [emailError, setEmailError] = useState(false);
 
+    let [bidDialogOpen, setBidDialogOpen] = useState(false);
+    let [bids, setBids] = useState({total: 0, notHighestItems: [], highestItems: []});
+    let [bidOpenLoading, setBidOpenLoading] = useState(false);
+
+    function checkBidStatus() {
+        setBidOpenLoading(true);
+        setBidDialogOpen(true);
+        axios.get('http://localhost:4250/bids/user', {
+            params: {
+                'first_name': props.user.first_name,
+                'last_name': props.user.last_name,
+                'email': props.user.email,
+        }}).then((res) => {
+            let bidInfo = res.data;
+            setBids(bidInfo);
+            setBidOpenLoading(false);  // Stop loading
+        }).catch((e) => {
+           setBids({total: 0, notHighestItems: [], highestItems: []});
+           setBidOpenLoading(false);  // Stop loading
+        });
+    }
 
     function login() {
 
@@ -62,7 +88,7 @@ export default function WebsiteHeader(props) {
             authenticated: true,
             first_name: firstName,
             last_name: lastName,
-            email: email
+            email: email,
         });
 
         // Reset fields for next usage
@@ -108,15 +134,19 @@ export default function WebsiteHeader(props) {
                     <Typography variant="body2">Logged in as {props.user.first_name + ' ' + props.user.last_name} &nbsp; &nbsp; &nbsp; </Typography>
                 }
                 {props.user.authenticated &&
-                    <Button color="inherit" variant={"outlined"} onClick={logout} >
-                        Logout
-                    </Button>
+                    <div>
+                        <Button color="inherit" style={{marginRight: '1em'}} variant={"outlined"} onClick={checkBidStatus} startIcon={<MenuBook />}>
+                            Bidding Status
+                        </Button>
+                        <Button color="inherit" variant={"outlined"} onClick={logout} startIcon={<ExitToApp />}>
+                            Logout
+                        </Button>
+                    </div>
                 }
 
 
             </Toolbar>
         </AppBar>
-
 
         <Dialog maxWidth={"md"} fullWidth open={loginDialogOpen} onClose={() => setLoginDialogOpen(false)}>
 
@@ -186,6 +216,102 @@ export default function WebsiteHeader(props) {
             </DialogActions>
         </Dialog>
 
+        <Dialog maxWidth={"md"} fullWidth open={bidDialogOpen} onClose={() => setBidDialogOpen(false)}>
+
+                <DialogTitle id="form-dialog-title">Your Bidding Information</DialogTitle>
+                <DialogContent>
+                    {bidOpenLoading ?
+                        <LinearProgress />
+                    :
+                        <div>
+                            <DialogContentText>
+                                You have placed a total of <b>{bids.total}</b> bids. You are the highest bidder on
+                                <b> {bids.highestItems.length}</b> item{bids.highestItems.length === 1 ? '' : 's'}. You have placed
+                                <b> {bids.notHighestItems.length}</b> other bid{bids.notHighestItems.length === 1 ? '' : 's'}.
+                            </DialogContentText>
+                            <Divider />
+                            <br />
+                            <Typography variant='h5' component='h5'>Current Highest Bidder on:</Typography>
+                            <br />
+                            {bids.highestItems.length > 0 ?
+                                <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Item Name</TableCell>
+                                            <TableCell>Your Bid</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {bids.highestItems.map((bid, index) =>
+                                            <TableRow key={index}>
+                                                <TableCell>
+                                                    {bid.name}
+                                                </TableCell>
+                                                <TableCell>${bid.bid}</TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                                </TableContainer>
+                                :
+                                <Typography variant='body2' component='p' style={{color: 'red'}}>
+                                    You are not the highest bidder on any items.
+                                </Typography>
+                            }
+
+                            <br />
+                            <Typography variant='h5' component='h5'>Other Bids</Typography>
+                            <Typography variant='body2' component='p'>The bids in this section are the ones that
+                                you have placed, but that are not currently winning.</Typography>
+                            <br />
+                            {bids.notHighestItems.length > 0 ?
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Item Name</TableCell>
+                                                <TableCell>Your Bid</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {bids.notHighestItems.map((bid, index) =>
+                                                <TableRow key={index}>
+                                                    <TableCell>
+                                                        {bid.name}
+                                                    </TableCell>
+                                                    <TableCell>${bid.bid}</TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                :
+                                bids.highestItems.length > 0 ?
+                                    <Typography variant='body2' component='p' style={{color: 'red'}}>
+                                        You are the highest bidder on all of your items.
+                                    </Typography>
+                                    :
+                                    <Typography variant='body2' component='p' style={{color: 'red'}}>
+                                        You have not placed any bids yet.
+                                    </Typography>
+                            }
+
+                            <Grid container spacing={3} justify={'center'} style={{paddingTop: '2em', paddingBottom: '2em'}}>
+
+
+                            </Grid>
+                        </div>
+                    }
+                </DialogContent>
+
+
+            <DialogActions>
+                    <Button onClick={() => setBidDialogOpen(false)} color="primary">
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }
