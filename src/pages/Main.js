@@ -178,8 +178,8 @@ export default function Main(props) {
         <Container>
             <Grid container spacing={4} style={{marginTop: '1vh'}} alignItems="stretch" direction={"row"}>
 
-                <Grid item xs={12}>
-                    <Card variant={'outlined'}>
+                <Grid item xs={9}>
+                    <Card variant={'outlined'} style={{height: '100%'}}>
                         <CardContent>
                             <Typography variant={'h6'}>
                                 Filter Auction Items
@@ -197,6 +197,42 @@ export default function Main(props) {
                                 />
                             )}
                         </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={3}>
+                    <Card variant={'outlined'} style={{height: '100%'}}>
+                            <Grid
+                                container
+                                spacing={1}
+                                direction="column"
+                                alignItems="center"
+                                justify="center"
+                                style={{ minHeight: '100%' }}
+                            >
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant='contained'
+                                        rel='noreferrer'
+                                        target='_blank'
+                                        color='secondary'
+                                        href='https://docs.google.com/forms/d/e/1FAIpQLSd8TeBNO7_MmWLLh0Ge8KtP5epoD3roQ88MOqaNqfcsMNg7CA/viewform?usp=sf_link'
+                                    >
+                                        T-Shirts and Masks
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant='contained'
+                                        rel='noreferrer'
+                                        target='_blank'
+                                        color='secondary'
+                                        href='http://ewbumass.org/donate'
+                                    >
+                                        Our Sponsors
+                                    </Button>
+                                </Grid>
+                            </Grid>
                     </Card>
                 </Grid>
 
