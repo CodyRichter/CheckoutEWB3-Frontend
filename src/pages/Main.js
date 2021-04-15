@@ -65,12 +65,7 @@ export default function Main(props) {
             console.log('Unable to load items!')
         })
 
-    }, [])
-
-    useEffect(() => {
-        console.log(bidAmount)
-    }, [bidAmount])
-
+    }, []);
 
     function toggleTag(tag) {
         let newSearchTags = [...searchTags];

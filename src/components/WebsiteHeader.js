@@ -38,7 +38,7 @@ export default function WebsiteHeader(props) {
     function checkBidStatus() {
         setBidOpenLoading(true);
         setBidDialogOpen(true);
-        axios.get('http://localhost:4250/bids/user', {
+        axios.get('https://auction.ewbumass.org/bids/user', {
             params: {
                 'first_name': props.user.first_name,
                 'last_name': props.user.last_name,
