@@ -10,21 +10,15 @@ import {
   Divider,
   InputAdornment,
   LinearProgress,
-  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
 import { isEmpty } from "lodash";
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Network from "../utils/network";
 
-export default function AuctionItemDialog({
-  open,
-  setOpen,
-  itemName,
-  resetItem,
-  token,
-}) {
+export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
   const [currentItem, setCurrentItem] = React.useState(null);
   const [bidAmount, setBidAmount] = React.useState("0");
 
@@ -33,8 +27,11 @@ export default function AuctionItemDialog({
 
   const [defaultBidDelta, setDefaultBidDelta] = React.useState(0);
 
-  let [successTagOpen, setSuccessTagOpen] = React.useState(false);
   let [bidError, setBidError] = React.useState("");
+
+  const navigate = useNavigate();
+
+  let { itemName } = useParams();
 
   React.useEffect(() => {
     Network.getBidDelta().then((delta) => {
@@ -43,7 +40,7 @@ export default function AuctionItemDialog({
   }, []);
 
   React.useEffect(() => {
-    if (open && !isEmpty(itemName)) {
+    if (!isEmpty(itemName)) {
       setLoading(true);
       setItemLoadError("");
       setBidError("");
@@ -63,11 +60,10 @@ export default function AuctionItemDialog({
           setLoading(false);
         });
     }
-  }, [open, itemName, defaultBidDelta]);
+  }, [itemName, defaultBidDelta]);
 
   function closeDialog() {
-    setOpen(false);
-    resetItem();
+    navigate("/");
   }
 
   function placeBid() {
@@ -100,14 +96,14 @@ export default function AuctionItemDialog({
   }
 
   const bidOnEnterPress = (event) => {
-    if (event.key === "Enter" && open) {
+    if (event.key === "Enter") {
       placeBid();
     }
   };
 
   return (
     <>
-      <Dialog maxWidth={"md"} fullWidth open={open} onClose={closeDialog}>
+      <Dialog maxWidth={"md"} fullWidth open={true} onClose={closeDialog}>
         {loading || currentItem === null || !isEmpty(itemLoadError) ? (
           !isEmpty(itemLoadError) ? (
             <DialogContent>
@@ -187,22 +183,6 @@ export default function AuctionItemDialog({
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar
-        open={successTagOpen}
-        autoHideDuration={6000}
-        onClose={() => setSuccessTagOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          elevation={6}
-          variant="filled"
-          onClose={() => setSuccessTagOpen(false)}
-          severity="success"
-        >
-          Bid Successfully Placed!
-        </Alert>
-      </Snackbar>
     </>
   );
 }

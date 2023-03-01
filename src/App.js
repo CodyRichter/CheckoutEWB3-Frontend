@@ -3,16 +3,28 @@ import WebsiteHeader from "./components/WebsiteHeader";
 import React, { useEffect } from "react";
 import { isEmpty } from "lodash";
 import Network from "./utils/network";
+import {
+    createBrowserRouter,
+    createHashRouter,
+    RouterProvider,
+} from "react-router-dom";
+import ErrorPage from "./pages/ErrorPage";
 
 const empty_profile = {
     first_name: "Expired Account.",
     last_name: " | Please Log In Again",
     email: "",
+    admin: false,
 };
 
 function App() {
     const [token, setToken] = React.useState(null);
     const [userProfile, setUserProfile] = React.useState(empty_profile);
+
+    const [refreshItemToken, setRefreshItemToken] = React.useState(0);
+    function refreshItems() {
+        setRefreshItemToken(refreshItemToken + 1);
+    }
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -30,6 +42,7 @@ function App() {
                 })
                 .catch((e) => {
                     setUserProfile(empty_profile);
+                    updateAndSaveToken(null);
                 });
         }
     }, [token]);
@@ -45,16 +58,19 @@ function App() {
         }
     }
 
-    return (
-        <>
-            <WebsiteHeader
-                token={token}
-                updateAndSaveToken={updateAndSaveToken}
-                userProfile={userProfile}
-            />
-            <Main token={token} userProfile={userProfile} />
-        </>
-    );
+    const router = createHashRouter([
+        {
+            path: "*",
+            element: <>
+                <WebsiteHeader token={token} updateAndSaveToken={updateAndSaveToken} userProfile={userProfile} refreshItems={refreshItems} />
+                <Main token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
+            </>,
+            errorElement: <ErrorPage />,
+        },
+    ]);
+
+
+    return <RouterProvider router={router} />
 }
 
 export default App;

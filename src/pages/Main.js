@@ -1,43 +1,52 @@
 import React, { useEffect, useState } from "react";
 import {
+    Alert,
     Button,
     Card,
     CardContent,
     Chip,
     Container,
+    createTheme,
+    Divider,
     Grid,
+    Snackbar,
+    ThemeProvider,
     Typography,
 } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 import Network from "../utils/network";
 import AuctionItemDialog from "../components/AuctionItemDialog";
 import AuctionItemCard from "../components/AuctionItemCard";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
-export default function Main({ token, userProfile }) {
+export default function Main({ token, refreshItems, refreshItemToken, userProfile }) {
     let [items, setItems] = useState([]);
 
     let [tags, setTags] = useState([]);
     let [searchTags, setSearchTags] = useState([]);
 
-    let [selectedItem, setSelectedItem] = useState(null);
-    let [itemDialogOpen, setItemDialogOpen] = useState(false);
+    let [bidSuccessTagOpen, setBidSuccessTagOpen] = React.useState(false);
 
     let [bidStatus, setBidStatus] = useState({});
 
-    function selectItem(item) {
-        setSelectedItem(item);
-        setItemDialogOpen(true);
+    const navigate = useNavigate();
+
+
+    function selectItem(itemName) {
+        navigate(`/items/${itemName}`);
     }
 
-    useEffect(() => {
-        //
-        // let itemsFromServer = [
-        //     { "name": "Kenyan Bowl", "tags": ["Kenya"], "description": "A wonderful handmade Maasai salad bowl", "image": "https://cdn20.pamono.com/p/g/5/0/506188_3zfnpi2eio/vintage-japanese-bowl-by-kei-fujiwara-1960s-1.jpg", "bid": 15, "bids_placed": false},
-        //     { "name": "Ghanaian Tongs", "tags": ["Ghana"], "description": "For your salad. Need I say more?", "image": "https://www.ubuy.com.gh/productimg/?image=aHR0cHM6Ly9pbWFnZXMtbmEuc3NsLWltYWdlcy1hbWF6b24uY29tL2ltYWdlcy9JLzUxc2J0aW5CdGRMLl9TUzQwMF8uanBn.jpg", "bid": 10.5, "bids_placed": false},
-        //     { "name": "Piri Piri Collection", "tags": ["Kenya"], "description": "A delicious collection of piri piri peppers", "image": "https://images.ricardocuisine.com/services/recipes/1074x1074_3621-background.jpg", "bid": 15.2, "bids_placed": false},
-        //     { "name": "$50 Chipotle Gift Card", "tags": ["Amherst", "Donated"], "description": "This is more than we ever got from our Chipotle fundraisers...", "image": "https://www.nrn.com/sites/nrn.com/files/styles/article_featured_standard/public/chipotle_5.gif?itok=Irzzw2re", "bid": 21.3, "bids_placed": false},
-        // ];
+    const footerFont = createTheme({
+        typography: {
+            fontFamily: [
+                'Montserrat',
+                'sans-serif',
+            ].join(','),
+        },
+    });
 
+
+    useEffect(() => {
         Network.getItems().then((itemsFromServer) => {
             setItems(itemsFromServer);
             // Gets unique tags from all items for the search filter
@@ -61,7 +70,7 @@ export default function Main({ token, userProfile }) {
                 setBidStatus(bidStatusMap);
             });
         }
-    }, [itemDialogOpen, token]);
+    }, [token, bidSuccessTagOpen, refreshItemToken]);
 
     function toggleTag(tag) {
         let newSearchTags = [...searchTags];
@@ -91,19 +100,19 @@ export default function Main({ token, userProfile }) {
                 alignItems="stretch"
                 spacing={3}
             >
-                <Grid item xs={12} md={9}>
+                <Grid item xs={12}>
                     <Card
                         variant={"outlined"}
                         style={{ display: "flex" }}
                         className="mt-3"
                     >
                         <CardContent>
-                            <Typography variant={"h6"}>Filter Auction Items</Typography>
+                            <Typography variant="h6">Search Auction Items by Tag</Typography>
+                            <Typography variant="body2">Use the tags below to narrow down which items are visible. If multiple tags are applied, only items containing all of the selected tags will appear.</Typography>
 
                             {Object.keys(tags).length > 0 &&
                                 tags.map((tag, i) => (
                                     <Chip
-                                        // style={{ marginRight: 8 }}
                                         className="m-2"
                                         label={tag}
                                         clickable
@@ -117,57 +126,24 @@ export default function Main({ token, userProfile }) {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} md={3} style={{ display: "flex" }} className="mt-3">
-                    <Card variant={"outlined"}>
-                        <Grid
-                            container
-                            direction="row"
-                            justifyContent="center"
-                            alignItems="center"
-                            spacing={1}
-                            className="pb-2 pt-2"
-                        >
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    rel="noreferrer"
-                                    target="_blank"
-                                    color="secondary"
-                                    fullWidth
-                                    href="https://docs.google.com/forms/d/e/1FAIpQLSd8TeBNO7_MmWLLh0Ge8KtP5epoD3roQ88MOqaNqfcsMNg7CA/viewform?usp=sf_link"
-                                >
-                                    T-Shirts and Masks
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    rel="noreferrer"
-                                    target="_blank"
-                                    color="secondary"
-                                    fullWidth
-                                    href="https://ewbumass.weebly.com/donate"
-                                >
-                                    Our Sponsors
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Card>
-                </Grid>
 
                 {items.filter((item) => matchTagFilter(item)).length === 0 && (
                     <Grid item xs={12}>
                         <Card elevation={1}>
                             <CardContent>
-                                <Typography variant="h4" component="h4">
-                                    No auction items matching search criteria found
+                                <Typography variant="h3" component="h3" color="error">
+                                    No Auction Items Found
                                 </Typography>
-                                <Typography variant="body1" component="p">
-                                    The search function uses an AND filter. This means that it
-                                    will search for items that match all of the selected tags. For
-                                    example, if your selected tags are <strong>Kenya</strong> and{" "}
-                                    <strong>Donated</strong>, it will search for items from Kenya
-                                    that have been donated.
+                                <br />
+                                <Typography variant="body1" component="div">
+                                    No items found with the tags that you have selected. Make sure that you're using
+                                    them correctly!
+
+                                    For example, if your selected tags are &nbsp;
+                                    {<Chip label="Kenya" color="secondary" icon={<Close />} />}&nbsp;
+                                    and&nbsp;
+                                    {<Chip label="Donated" color="secondary" icon={<Close />} />}&nbsp;
+                                    it will search for items that are both from Kenya and have been donated.
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -177,52 +153,81 @@ export default function Main({ token, userProfile }) {
                 {items
                     .filter((item) => matchTagFilter(item))
                     .map((item, index) => (
-                        <Grid item xs={12} md={4} key={index} style={{ display: "flex" }}>
+                        <Grid item xs={12} md={4} key={index}>
                             <AuctionItemCard
                                 item={item}
                                 selectItemToOpen={selectItem}
                                 bidStatus={bidStatus[item["name"]]}
+                                userProfile={userProfile}
+                                token={token}
+                                refreshItems={refreshItems}
                             />
                         </Grid>
                     ))}
-                <Grid item xs={12} style={{ paddingTop: "1em" }}>
-                    <Typography variant="subtitle1">
-                        Website created by{" "}
-                        <a
-                            target="_blank"
-                            rel="noreferrer"
-                            href="https://www.linkedin.com/in/Cody-Richter"
-                        >
-                            Cody Richter
-                        </a>
-                        . This auction webpage is open source and available to view on
-                        Github. &nbsp;
-                        <a
-                            rel="noreferrer"
-                            target="_blank"
-                            href="https://github.com/CodyRichter/CheckoutEWB3-Frontend"
-                        >
-                            [Client]
-                        </a>
-                        &nbsp; &nbsp;
-                        <a
-                            rel="noreferrer"
-                            target="_blank"
-                            href="https://github.com/CodyRichter/CheckoutEWB3-Backend"
-                        >
-                            [Server]
-                        </a>
-                    </Typography>
+                <Grid item xs={12} className='mt-3 mb-5'>
+
+                    <Divider className='mb-3' />
+
+                    <ThemeProvider theme={footerFont}>
+                        <Typography variant="subtitle1">
+                            Website created by &nbsp;
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                href="https://cody.richter.codes"
+                            >
+                                Cody Richter
+                            </a> for the Engineers Without Borders - UMass Amherst Student Chapter.
+
+                            This website and the code behind it are open source and available on
+                            Github. &nbsp;
+                            <a
+                                rel="noreferrer"
+                                target="_blank"
+                                href="https://github.com/CodyRichter/CheckoutEWB3-Frontend"
+                            >
+                                [Website]
+                            </a>
+                            &nbsp; &nbsp;
+                            <a
+                                rel="noreferrer"
+                                target="_blank"
+                                href="https://github.com/CodyRichter/CheckoutEWB3-Backend"
+                            >
+                                [Server]
+                            </a>
+                        </Typography>
+                    </ThemeProvider>
                 </Grid>
             </Grid>
 
-            <AuctionItemDialog
-                open={itemDialogOpen}
-                setOpen={setItemDialogOpen}
-                itemName={selectedItem}
-                resetItem={() => setSelectedItem(null)}
-                token={token}
-            />
+
+            <Snackbar
+                open={bidSuccessTagOpen}
+                autoHideDuration={6000}
+                onClose={() => setBidSuccessTagOpen(false)}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert
+                    elevation={6}
+                    variant="filled"
+                    onClose={() => setBidSuccessTagOpen(false)}
+                    severity="success"
+                >
+                    Bid Successfully Placed!
+                </Alert>
+            </Snackbar>
+
+            <Routes>
+                <Route
+                    path="items/:itemName"
+                    element={<AuctionItemDialog
+                        token={token}
+                        setSuccessTagOpen={setBidSuccessTagOpen}
+                    />}
+                />
+            </Routes>
+
         </Container>
     );
 }

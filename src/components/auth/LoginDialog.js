@@ -13,10 +13,9 @@ import {
 } from "@mui/material";
 import Network from "../../utils/network";
 import { isEmpty } from "lodash";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginDialog({
-    loginDialogOpen,
-    setLoginDialogOpen,
     updateAndSaveToken,
 }) {
     const [email, setEmail] = useState("");
@@ -25,6 +24,12 @@ export default function LoginDialog({
     const [passwordError, setPasswordError] = useState(false);
 
     const [loginError, setLoginError] = useState("");
+
+    const navigate = useNavigate();
+
+    function closeDialog() {
+        navigate("/");
+    }
 
     function login() {
         setLoginError("");
@@ -55,7 +60,7 @@ export default function LoginDialog({
         Network.login(email, password)
             .then((token) => {
                 updateAndSaveToken(token);
-                setLoginDialogOpen(false);
+                closeDialog();
             })
             .catch((e) => {
                 setLoginError(e.message);
@@ -72,8 +77,8 @@ export default function LoginDialog({
         <Dialog
             maxWidth={"md"}
             fullWidth
-            open={loginDialogOpen}
-            onClose={() => setLoginDialogOpen(false)}
+            open={true}
+            onClose={closeDialog}
         >
             <DialogTitle id="form-dialog-title">Log In</DialogTitle>
             <DialogContent>
@@ -129,7 +134,7 @@ export default function LoginDialog({
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setLoginDialogOpen(false)} color="primary">
+                <Button onClick={closeDialog} color="primary">
                     Cancel
                 </Button>
                 <Button onClick={login} color="secondary" variant={"outlined"}>

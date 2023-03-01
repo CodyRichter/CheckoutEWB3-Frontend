@@ -1,4 +1,4 @@
-import { get, has } from "lodash";
+import { get, has, isEmpty } from "lodash";
 
 const API_ROOT = "http://localhost:4250/";
 
@@ -280,6 +280,129 @@ class Network {
         }
       });
   }
+
+  static async createItem(name, description, bid, tags, image, additionalImages, token) {
+    let itemContent = {
+      "name": name,
+      "description": description,
+      "tags": tags,
+      "image": image,
+      "bid": bid
+    }
+
+    if (!isEmpty(additionalImages)) {
+      console.log("additional images");
+      itemContent["additional_images"] = additionalImages;
+    }
+
+    return fetch(API_ROOT + "items/item", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
+      body: JSON.stringify(itemContent),
+    })
+      .then((response) => {
+        if (response.status >= 400 && response.status < 500) {
+          return response.json().then((data) => {
+            throw new Error(data["detail"]);
+          });
+        } else if (response.status >= 500) {
+          throw new Error(
+            "Server is unable to handle request. Please try again later."
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.message.toLowerCase().includes("load failed")) {
+          throw new Error(
+            "Unable to connect to server. Please try again later."
+          );
+        } else {
+          throw error;
+        }
+      });
+  }
+
+  static async updateItem(name, description, bid, tags, image, additionalImages, token) {
+    let itemContent = {
+      "name": name,
+      "description": description,
+      "tags": tags,
+      "image": image,
+      "bid": bid
+    }
+
+    if (!isEmpty(additionalImages)) {
+      console.log("additional images");
+      itemContent["additional_images"] = additionalImages;
+    }
+
+    return fetch(API_ROOT + "items/item", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
+      body: JSON.stringify(itemContent),
+    })
+      .then((response) => {
+        if (response.status >= 400 && response.status < 500) {
+          return response.json().then((data) => {
+            throw new Error(data["detail"]);
+          });
+        } else if (response.status >= 500) {
+          throw new Error(
+            "Server is unable to handle request. Please try again later."
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.message.toLowerCase().includes("load failed")) {
+          throw new Error(
+            "Unable to connect to server. Please try again later."
+          );
+        } else {
+          throw error;
+        }
+      });
+  }
+
+  static async deleteItem(itemName, token) {
+    return fetch(
+      API_ROOT + "items/item?" + new URLSearchParams({ item_name: itemName }),
+      {
+        method: "DELETE",
+        headers: {
+          "Authorization": "Bearer " + token,
+        }
+      }
+    )
+      .then((response) => {
+        if (response.status >= 400) {
+          throw new Error(
+            "Server is unable to handle request. Please try again later."
+          );
+        }
+        return response.json();
+      })
+      .then((data) => {
+        return data;
+      })
+      .catch((error) => {
+        if (error.message.toLowerCase().includes("load failed")) {
+          throw new Error(
+            "Unable to connect to server. Please try again later."
+          );
+        } else {
+          throw error;
+        }
+      });
+  }
+
 }
 
 export default Network;

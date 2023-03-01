@@ -8,7 +8,6 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,6 +15,7 @@ import { useState } from "react";
 import { isEmpty } from "lodash";
 import React from "react";
 import Network from "../../utils/network";
+import { useNavigate } from "react-router-dom";
 
 const specialCharacterArray = [
   "!",
@@ -52,7 +52,7 @@ const specialCharacterArray = [
 const validEmailRegex =
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
-export function SignupDialog({ open, setOpen }) {
+export function SignupDialog({ setRegisterSuccessOpen }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -62,11 +62,14 @@ export function SignupDialog({ open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
 
-  const [accountCreationSuccessOpen, setAccountCreationSuccessOpen] =
-    useState(false);
+  const navigate = useNavigate();
+
+  function closeDialog() {
+    navigate("/");
+  }
 
   const handleClose = () => {
-    setOpen(false);
+    closeDialog();
     setFirstName("");
     setLastName("");
     setEmail("");
@@ -124,7 +127,7 @@ export function SignupDialog({ open, setOpen }) {
     Network.register(firstName, lastName, email, password)
       .then(() => {
         setLoading(false);
-        setAccountCreationSuccessOpen(true);
+        setRegisterSuccessOpen(true);
         handleClose();
       })
       .catch((error) => {
@@ -135,7 +138,7 @@ export function SignupDialog({ open, setOpen }) {
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={true} onClose={handleClose}>
         <DialogTitle>Sign Up</DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-2">
@@ -143,7 +146,7 @@ export function SignupDialog({ open, setOpen }) {
             We will not share your account information with anyone.
           </DialogContentText>
           <Grid container spacing={2} className="mt-3">
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 autoFocus
                 id="name"
@@ -154,7 +157,7 @@ export function SignupDialog({ open, setOpen }) {
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 id="name"
                 label="Last Name"
@@ -226,21 +229,6 @@ export function SignupDialog({ open, setOpen }) {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar
-        open={accountCreationSuccessOpen}
-        autoHideDuration={6000}
-        onClose={() => setAccountCreationSuccessOpen(false)}
-        anchorOrigin={{ horizontal: "center", vertical: "top" }}
-      >
-        <Alert
-          onClose={() => setAccountCreationSuccessOpen(false)}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          Account creation successful! You may now log in with your new account.
-        </Alert>
-      </Snackbar>
     </>
   );
 }

@@ -18,18 +18,23 @@ import {
 } from "@mui/material";
 import { isEmpty } from "lodash";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Network from "../utils/network";
 
 export default function UserBidSummaryDialog({
-    bidDialogOpen,
-    setBidDialogOpen,
     token,
 }) {
     const [bids, setBids] = React.useState({ winning_bids: [], losing_bids: [] });
     const [bidOpenLoading, setBidOpenLoading] = React.useState(false);
 
+    const navigate = useNavigate();
+
+    function closeDialog() {
+        navigate("/");
+    }
+
     React.useEffect(() => {
-        if (bidDialogOpen && !isEmpty(token)) {
+        if (!isEmpty(token)) {
             setBidOpenLoading(true);
             Network.getUserBids(token)
                 .then((response) => {
@@ -39,14 +44,14 @@ export default function UserBidSummaryDialog({
                     setBidOpenLoading(false);
                 });
         }
-    }, [bidDialogOpen, token]);
+    }, [token]);
 
     return (
         <Dialog
             maxWidth={"md"}
             fullWidth
-            open={bidDialogOpen}
-            onClose={() => setBidDialogOpen(false)}
+            open={true}
+            onClose={closeDialog}
         >
             <DialogTitle id="form-dialog-title">Your Bidding Information</DialogTitle>
             <DialogContent>
@@ -94,7 +99,7 @@ export default function UserBidSummaryDialog({
                         ) : (
                             <Typography
                                 variant="body2"
-                                component="p"
+                                component="div"
                                 style={{ color: "red" }}
                             >
                                 You are not the highest bidder on any items.
@@ -105,9 +110,9 @@ export default function UserBidSummaryDialog({
                         <Typography variant="h5" component="h5">
                             Other Bids
                         </Typography>
-                        <Typography variant="body2" component="p">
-                            The bids in this section are the ones that you have placed, but
-                            that are not currently winning.
+                        <Typography variant="body2" component="div">
+                            The items in this section are ones that you have previously bid on, but
+                            someone else is currently winning.
                         </Typography>
                         <br />
                         {bids.losing_bids.length > 0 ? (
@@ -132,7 +137,7 @@ export default function UserBidSummaryDialog({
                         ) : bids.winning_bids.length > 0 ? (
                             <Typography
                                 variant="body2"
-                                component="p"
+                                component="div"
                                 style={{ color: "red" }}
                             >
                                 You are the highest bidder on all of your items.
@@ -140,7 +145,7 @@ export default function UserBidSummaryDialog({
                         ) : (
                             <Typography
                                 variant="body2"
-                                component="p"
+                                component="div"
                                 style={{ color: "red" }}
                             >
                                 You have not placed any bids yet.
@@ -160,7 +165,7 @@ export default function UserBidSummaryDialog({
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={() => setBidDialogOpen(false)} color="primary">
+                <Button onClick={closeDialog} color="primary">
                     Close
                 </Button>
             </DialogActions>
