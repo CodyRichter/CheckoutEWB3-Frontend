@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { isEmpty } from "lodash";
 import Network from "./utils/network";
 import {
-    createBrowserRouter,
     createHashRouter,
     RouterProvider,
 } from "react-router-dom";

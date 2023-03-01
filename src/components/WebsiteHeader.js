@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, AppBar, Button, ButtonGroup, Divider, Grid, IconButton, Snackbar, SwipeableDrawer, Toolbar, Typography } from "@mui/material";
+import { Alert, AppBar, Button, ButtonGroup, Grid, Snackbar, SwipeableDrawer, Toolbar, Typography } from "@mui/material";
 import { AddShoppingCart, AppRegistration, ExitToApp, Gavel, Login, MenuBook, MoreVert } from "@mui/icons-material";
 import LoginDialog from "./auth/LoginDialog";
 import UserBidSummaryDialog from "./UserBidSummaryDialog";
