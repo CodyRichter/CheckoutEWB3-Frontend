@@ -17,7 +17,8 @@ import { Add, Close } from "@mui/icons-material";
 import Network from "../utils/network";
 import AuctionItemDialog from "../components/AuctionItemDialog";
 import AuctionItemCard from "../components/AuctionItemCard";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { isEmpty } from "lodash";
 
 export default function Main({ token, refreshItems, refreshItemToken, userProfile }) {
     let [items, setItems] = useState([]);
@@ -28,6 +29,9 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
     let [bidSuccessTagOpen, setBidSuccessTagOpen] = React.useState(false);
 
     let [bidStatus, setBidStatus] = useState({});
+
+    let [isBiddingOpen, setIsBiddingOpen] = useState(false);
+
 
     const navigate = useNavigate();
 
@@ -47,6 +51,10 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
 
 
     useEffect(() => {
+        Network.getBiddingEnabled().then((is_enabled) => {
+            setIsBiddingOpen(is_enabled);
+        });
+
         Network.getItems().then((itemsFromServer) => {
             setItems(itemsFromServer);
             // Gets unique tags from all items for the search filter
@@ -100,6 +108,26 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
                 alignItems="stretch"
                 spacing={3}
             >
+
+                <Grid item xs={12}>
+                    {isBiddingOpen ? (
+                        <Alert severity="success" className="mt-3">
+                            Bidding is currently open! &nbsp;
+                            {!isEmpty(token) && ('You may bid on items below by clicking the "Place Bid" button on an item card.')}
+                            {isEmpty(token) && (
+                                <>
+                                    You must first <Link to="/login">login</Link> or <Link to="/register">register</Link> to bid on items.
+                                </>
+                            )}
+
+                        </Alert>
+                    ) : (
+                        <Alert severity="error" className="mt-3">
+                            Bidding is currently closed. Please check back later!
+                        </Alert>
+                    )}
+                </Grid>
+
                 <Grid item xs={12}>
                     <Card
                         variant={"outlined"}
@@ -228,6 +256,6 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
                 />
             </Routes>
 
-        </Container>
+        </Container >
     );
 }

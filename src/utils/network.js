@@ -246,6 +246,78 @@ class Network {
       });
   }
 
+  static async getBiddingEnabled() {
+    return fetch(API_ROOT + "bids/enabled", {
+      method: "GET",
+    })
+      .then((response) => {
+        if (response.status >= 400) {
+          throw new Error(
+            "Server is unable to handle request. Please try again later."
+          );
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (has(data, "bidding_enabled")) {
+          return data["bidding_enabled"];
+        } else {
+          throw new Error(
+            "Server responded with invalid data. Please try again later."
+          );
+        }
+      })
+      .catch((error) => {
+        if (error.message.toLowerCase().includes("load failed")) {
+          throw new Error(
+            "Unable to connect to server. Please try again later."
+          );
+        } else {
+          throw error;
+        }
+      });
+  }
+
+  static async setBiddingEnabled(enabled, token) {
+    return fetch(
+      API_ROOT + "bids/enabled",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token,
+        },
+        body: JSON.stringify({
+          enabled: enabled,
+        }),
+      }
+    )
+      .then((response) => {
+        if (response.status >= 400 && response.status < 500) {
+          return response.json().then((data) => {
+            throw new Error(data["detail"]);
+          });
+        } else if (response.status >= 500) {
+          throw new Error(
+            "Server is unable to handle request. Please try again later."
+          );
+        }
+        return response.json();
+      })
+      .then((data) => {
+        return data;
+      })
+      .catch((error) => {
+        if (error.message.toLowerCase().includes("load failed")) {
+          throw new Error(
+            "Unable to connect to server. Please try again later."
+          );
+        } else {
+          throw error;
+        }
+      });
+  }
+
   static async placeBid(itemName, bid, token) {
     return fetch(API_ROOT + "bids/bid", {
       method: "POST",

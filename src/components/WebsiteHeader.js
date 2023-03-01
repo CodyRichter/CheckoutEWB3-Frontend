@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, AppBar, Button, ButtonGroup, Divider, Grid, IconButton, Snackbar, SwipeableDrawer, Toolbar, Typography } from "@mui/material";
-import { AddShoppingCart, AppRegistration, ExitToApp, Login, MenuBook, MoreVert } from "@mui/icons-material";
+import { AddShoppingCart, AppRegistration, ExitToApp, Gavel, Login, MenuBook, MoreVert } from "@mui/icons-material";
 import LoginDialog from "./auth/LoginDialog";
 import UserBidSummaryDialog from "./UserBidSummaryDialog";
 import { isEmpty } from "lodash";
@@ -8,6 +8,7 @@ import { SignupDialog } from "./auth/SignupDialog";
 import useIsMobile from "../utils/useIsMobile";
 import { CreateItemDialog } from "./admin/CreateItemDialog";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import ToggleBiddingDialog from "./admin/ToggleBiddingDialog";
 
 export default function WebsiteHeader({
     token,
@@ -15,6 +16,7 @@ export default function WebsiteHeader({
     userProfile,
     refreshItems,
 }) {
+
     const [newItemSuccessOpen, setNewItemSuccessOpen] = useState(false);
     const [registerSuccessOpen, setRegisterSuccessOpen] = useState(false);
     const [mobileNavDrawerOpen, setMobileNavDrawerOpen] = useState(false);
@@ -71,15 +73,27 @@ export default function WebsiteHeader({
             {!isEmpty(token) && !isMobile && _loginLabel}
             <ButtonGroup variant="text">
                 {!isEmpty(token) && userProfile.admin && (
-                    <Button
-                        color="inherit"
-                        style={isMobile ? { marginRight: "1em" } : {}}
-                        variant={"outlined"}
-                        onClick={() => navigate("/create_item")}
-                        startIcon={<AddShoppingCart />}
-                    >
-                        Create Item
-                    </Button>
+                    <>
+                        <Button
+                            color="inherit"
+                            style={isMobile ? { marginRight: "1em" } : {}}
+                            variant={"outlined"}
+                            onClick={() => navigate("/toggle_bidding")}
+                            startIcon={<Gavel />}
+                        >
+                            Toggle Bidding
+                        </Button>
+
+                        <Button
+                            color="inherit"
+                            style={isMobile ? { marginRight: "1em" } : {}}
+                            variant={"outlined"}
+                            onClick={() => navigate("/create_item")}
+                            startIcon={<AddShoppingCart />}
+                        >
+                            Create Item
+                        </Button>
+                    </>
                 )}
 
                 {!isEmpty(token) && (
@@ -115,6 +129,19 @@ export default function WebsiteHeader({
             spacing={3}
             className="mt-3 mb-5"
         >
+            <Grid item xs={9}>
+                {!isEmpty(token) && userProfile.admin && (
+                    <Button
+                        color="primary"
+                        fullWidth
+                        variant="contained"
+                        onClick={() => navigate("/toggle_bidding")}
+                        startIcon={<Gavel />}
+                    >
+                        Toggle Bidding
+                    </Button>
+                )}
+            </Grid>
 
             <Grid item xs={9}>
                 {!isEmpty(token) && userProfile.admin && (
@@ -208,6 +235,13 @@ export default function WebsiteHeader({
                     element={<LoginDialog
                         updateAndSaveToken={updateAndSaveToken}
                     />}
+                />
+            </Routes>
+
+            <Routes>
+                <Route
+                    path="toggle_bidding"
+                    element={<ToggleBiddingDialog token={token} userProfile={userProfile} />}
                 />
             </Routes>
 
