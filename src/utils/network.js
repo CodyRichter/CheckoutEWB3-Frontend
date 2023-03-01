@@ -1,6 +1,6 @@
 import { get, has, isEmpty } from "lodash";
 
-const API_ROOT = "http://localhost:4250/";
+const API_ROOT = "https://checkout-ewb.herokuapp.com/";
 
 class Network {
   static async login(username, password) {
