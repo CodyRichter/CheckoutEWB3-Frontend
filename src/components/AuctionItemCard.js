@@ -18,6 +18,7 @@ import DeleteItemDialog from "./admin/DeleteItemDialog";
 import { EditItemDialog } from "./admin/EditItemDialog";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { Blurhash } from "react-blurhash";
 
 export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token, refreshItems }) {
 
@@ -49,7 +50,11 @@ export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, use
                         alt={item["description"]}
                         width="100%"
                         height="auto"
-                        placeholderSrc=""
+                        placeholder={<Blurhash
+                            hash={item["image_placeholder"]}
+                            height='350px'
+                            width='100%'
+                        />}
                     />
                 </CardMedia>
             </CardActionArea>
