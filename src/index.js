@@ -2,14 +2,14 @@ import React from "react";
 import App from "./App";
 import { createRoot } from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material";
-import { amber, indigo } from "@mui/material/colors";
+import { green, indigo } from "@mui/material/colors";
 
 const root = createRoot(document.getElementById("root"));
 
 const theme = createTheme({
   palette: {
     primary: indigo,
-    secondary: amber,
+    secondary: green,
   },
   typography: {
     fontFamily: [
