@@ -165,7 +165,7 @@ export default function UserBidSummaryDialog({
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={closeDialog} color="primary">
+                <Button onClick={closeDialog} color="warning" variant="contained">
                     Close
                 </Button>
             </DialogActions>

@@ -27,11 +27,11 @@ export default function DeleteItemDialog({ open, setOpen, itemName, token, refre
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleClose} color="primary" variant="contained">
                         Cancel
                     </Button>
-                    <Button onClick={handleDelete} color="primary">
-                        Delete
+                    <Button onClick={handleDelete} color="error" variant="contained">
+                        Delete Item
                     </Button>
                 </DialogActions>
             </Dialog>

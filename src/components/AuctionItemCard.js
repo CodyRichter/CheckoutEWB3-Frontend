@@ -17,6 +17,7 @@ import { Edit } from "@mui/icons-material";
 import DeleteItemDialog from "./admin/DeleteItemDialog";
 import { EditItemDialog } from "./admin/EditItemDialog";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token, refreshItems }) {
 
@@ -43,13 +44,12 @@ export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, use
         <Card elevation={5}>
             <CardActionArea>
                 <CardMedia title={"Picture of " + item["name"]}>
-                    <img
+                    <LazyLoadImage
                         src={item["image"]}
                         alt={item["description"]}
-                        style={{
-                            maxWidth: "100%",
-                            height: "auto",
-                        }}
+                        width="100%"
+                        height="auto"
+                        placeholderSrc=""
                     />
                 </CardMedia>
             </CardActionArea>
@@ -89,21 +89,11 @@ export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, use
 
             </CardContent>
             <CardActions>
-                {item["additional_images"] !== "" && (
-                    <Button
-                        size="small"
-                        color="secondary"
-                        variant="outlined"
-                        target="_blank"
-                        href={item["additional_images"]}
-                    >
-                        More Photos
-                    </Button>
-                )}
                 <Button
                     size="small"
-                    color="secondary"
+                    color="primary"
                     variant="contained"
+                    style={{ marginLeft: "auto" }}
                     onClick={markItemAsSelected}
                 >
                     Place Bid

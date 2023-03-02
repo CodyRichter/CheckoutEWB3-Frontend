@@ -72,7 +72,7 @@ export default function ToggleBiddingDialog({ token, userProfile }) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleClose} color="warning" variant="contained">
                         Close
                     </Button>
                 </DialogActions>

@@ -14,7 +14,7 @@ class Network {
     })
       .then((response) => {
         if (response.status === 401) {
-          throw new Error("Invalid Username or Password.");
+          throw new Error("Invalid Email Address or Password.");
         } else if (response.status >= 500) {
           throw new Error(
             "Server is unable to handle request. Please try again later."

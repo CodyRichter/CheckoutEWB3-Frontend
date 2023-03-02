@@ -134,10 +134,10 @@ export default function LoginDialog({
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeDialog} color="primary">
+                <Button onClick={closeDialog} variant="contained" color="warning">
                     Cancel
                 </Button>
-                <Button onClick={login} color="secondary" variant={"outlined"}>
+                <Button onClick={login} color="primary" variant="contained">
                     Login
                 </Button>
             </DialogActions>

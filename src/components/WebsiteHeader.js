@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, AppBar, Button, ButtonGroup, Grid, Snackbar, SwipeableDrawer, Toolbar, Typography } from "@mui/material";
-import { AddShoppingCart, AppRegistration, ExitToApp, Gavel, Login, MenuBook, MoreVert } from "@mui/icons-material";
+import { AddShoppingCart, AppRegistration, ExitToApp, Gavel, Login, Menu, MenuBook } from "@mui/icons-material";
 import LoginDialog from "./auth/LoginDialog";
 import UserBidSummaryDialog from "./UserBidSummaryDialog";
 import { isEmpty } from "lodash";
@@ -210,7 +210,7 @@ export default function WebsiteHeader({
                     {isEmpty(token) ? authButtons :
                         isMobile ? (
                             <>
-                                <Button color="inherit" variant="outlined" endIcon={<MoreVert />} onClick={toggleDrawer(true)}>
+                                <Button color="inherit" variant="outlined" endIcon={<Menu />} onClick={toggleDrawer(true)}>
                                     Actions
                                 </Button>
                                 <SwipeableDrawer

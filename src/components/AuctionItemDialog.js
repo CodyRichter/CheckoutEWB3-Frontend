@@ -170,13 +170,13 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
         )}
 
         <DialogActions>
-          <Button onClick={closeDialog} color="primary">
+          <Button onClick={closeDialog} color="warning" variant="contained">
             Cancel
           </Button>
           <Button
             onClick={placeBid}
-            color="secondary"
-            variant={"contained"}
+            color="primary"
+            variant="contained"
             disabled={isEmpty(token)}
           >
             Bid
