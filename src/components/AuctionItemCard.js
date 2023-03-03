@@ -50,6 +50,7 @@ export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, use
                         alt={item["description"]}
                         width="100%"
                         height="auto"
+                        key={item["image_placeholder"]}
                         placeholder={<Blurhash
                             hash={item["image_placeholder"]}
                             height='350px'

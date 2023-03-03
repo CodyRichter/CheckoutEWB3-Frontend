@@ -19,14 +19,14 @@ import { useState } from "react";
 import { isEmpty } from "lodash";
 import React from "react";
 import Network from "../../utils/network";
+import FileUploadDropzone from "../FileUploadDropzone";
 import { useNavigate } from "react-router-dom";
 
 export function CreateItemDialog({ token, refreshItems, setNewItemSuccessOpen }) {
     const [itemName, setItemName] = useState("");
     const [itemDescription, setItemDescription] = useState("");
     const [bid, setBid] = useState("");
-    const [image, setImage] = useState("");
-    const [additionalImages, setAdditionalImages] = useState("");
+    const [image, setImage] = useState(null);
 
     const [pendingTag, setPendingTag] = useState("");
     const [tags, setTags] = useState([]);
@@ -41,8 +41,7 @@ export function CreateItemDialog({ token, refreshItems, setNewItemSuccessOpen })
         setItemName("");
         setItemDescription("");
         setBid("");
-        setImage("");
-        setAdditionalImages("");
+        setImage(null);
         setTags([]);
         setLoading(false);
         setErrorMessages([]);
@@ -68,7 +67,7 @@ export function CreateItemDialog({ token, refreshItems, setNewItemSuccessOpen })
         }
 
         if (isEmpty(image)) {
-            errorMessages.push("- Image URL is required");
+            errorMessages.push("- Image is required");
         }
         setErrorMessages(errorMessages);
         return errorMessages.length === 0;
@@ -81,8 +80,8 @@ export function CreateItemDialog({ token, refreshItems, setNewItemSuccessOpen })
         }
 
         setLoading(true);
-        // name, description, bid, tags, image, additionalImages, token
-        Network.createItem(itemName, itemDescription, bid, tags, image, additionalImages, token)
+        // name, description, bid, tags, image, token
+        Network.createItem(itemName, itemDescription, bid, tags, image, token)
             .then(() => {
                 setLoading(false);
                 setNewItemSuccessOpen(true);
@@ -142,31 +141,8 @@ export function CreateItemDialog({ token, refreshItems, setNewItemSuccessOpen })
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                required
-                                margin="dense"
-                                id="image"
-                                label="Image URL"
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                                helperText="Image URL for the item. This must be a direct link to the image. You can use a service like Imgur to host your images."
-                                onChange={(e) => setImage(e.target.value)}
-                            />
-                        </Grid>
-
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                id="additionalImages"
-                                label="Additional Images Album Link"
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                                helperText="Link to external album for additional images. This does not need to be a direct link to an image."
-                                onChange={(e) => setAdditionalImages(e.target.value)}
-                            />
+                        <Grid item xs={12}>
+                            <FileUploadDropzone image={image} setImage={setImage} />
                         </Grid>
 
                         <Grid item xs={12}>

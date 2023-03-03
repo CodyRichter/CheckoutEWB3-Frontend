@@ -1,6 +1,7 @@
 import { get, has, isEmpty } from "lodash";
 
-const API_ROOT = "https://checkout-ewb.herokuapp.com/";
+// const API_ROOT = "https://checkout-ewb.herokuapp.com/";
+const API_ROOT = "http://localhost:4250/";
 
 class Network {
   static async login(username, password) {
@@ -353,27 +354,35 @@ class Network {
       });
   }
 
-  static async createItem(name, description, bid, tags, image, additionalImages, token) {
-    let itemContent = {
-      "name": name,
-      "description": description,
-      "tags": tags,
-      "image": image,
-      "bid": bid
-    }
+  /**
+   * Create a new auction item
+   * @param {string | Blob} name Item Name
+   * @param {string | Blob} description Item Description
+   * @param {string | Blob} bid Starting Bid
+   * @param {string[]} tags Item Tags
+   * @param {Blob | null} image Item Image
+   * @param {string} token User Token
+   */
+  static async createItem(name, description, bid, tags, image, token) {
+    let formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("bid", bid);
+    tags.forEach((tag) => {
+      formData.append("tags", tag);
+    });
 
-    if (!isEmpty(additionalImages)) {
-      console.log("additional images");
-      itemContent["additional_images"] = additionalImages;
+    if (!isEmpty(image)) {
+      console.log(image);
+      formData.append("image", image);
     }
 
     return fetch(API_ROOT + "items/item", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": "Bearer " + token,
       },
-      body: JSON.stringify(itemContent),
+      body: formData,
     })
       .then((response) => {
         if (response.status >= 400 && response.status < 500) {
@@ -398,27 +407,26 @@ class Network {
       });
   }
 
-  static async updateItem(name, description, bid, tags, image, additionalImages, token) {
-    let itemContent = {
-      "name": name,
-      "description": description,
-      "tags": tags,
-      "image": image,
-      "bid": bid
-    }
+  static async updateItem(name, description, bid, tags, image, token) {
+    let formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("bid", bid);
+    tags.forEach((tag) => {
+      formData.append("tags", tag);
+    });
 
-    if (!isEmpty(additionalImages)) {
-      console.log("additional images");
-      itemContent["additional_images"] = additionalImages;
+    if (!isEmpty(image)) {
+      console.log(image);
+      formData.append("image", image);
     }
 
     return fetch(API_ROOT + "items/item", {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": "Bearer " + token,
       },
-      body: JSON.stringify(itemContent),
+      body: formData,
     })
       .then((response) => {
         if (response.status >= 400 && response.status < 500) {

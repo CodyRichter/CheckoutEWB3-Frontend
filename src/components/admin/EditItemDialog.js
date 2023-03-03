@@ -20,6 +20,7 @@ import { isEmpty } from "lodash";
 import React from "react";
 import Network from "../../utils/network";
 import { useNavigate, useParams } from "react-router-dom";
+import FileUploadDropzone from "../FileUploadDropzone";
 
 export function EditItemDialog({ token, setEditSuccessOpen, refreshItems }) {
 
@@ -27,8 +28,7 @@ export function EditItemDialog({ token, setEditSuccessOpen, refreshItems }) {
     const [itemDescription, setItemDescription] = useState("");
     const [bid, setBid] = useState("");
     const [bidsPlaced, setBidsPlaced] = useState(false);
-    const [image, setImage] = useState("");
-    const [additionalImages, setAdditionalImages] = useState("");
+    const [image, setImage] = useState(null);
 
     const [pendingTag, setPendingTag] = useState("");
     const [tags, setTags] = useState([]);
@@ -45,8 +45,6 @@ export function EditItemDialog({ token, setEditSuccessOpen, refreshItems }) {
             Network.getItem(itemName)
                 .then((item) => {
                     setItemDescription(item["description"]);
-                    setImage(item["image"]);
-                    setAdditionalImages(item["additional_images"]);
                     setTags(item["tags"]);
                     setBidsPlaced(item["bids_placed"]);
                     setBid(item["bid"]);
@@ -80,9 +78,6 @@ export function EditItemDialog({ token, setEditSuccessOpen, refreshItems }) {
             errorMessages.push("- Starting bid must be a positive number.");
         }
 
-        if (isEmpty(image)) {
-            errorMessages.push("- Image URL is required");
-        }
         setErrorMessages(errorMessages);
         return errorMessages.length === 0;
     }
@@ -94,7 +89,7 @@ export function EditItemDialog({ token, setEditSuccessOpen, refreshItems }) {
         }
 
         setLoading(true);
-        Network.updateItem(itemName, itemDescription, bid, tags, image, additionalImages, token)
+        Network.updateItem(itemName, itemDescription, bid, tags, image, token)
             .then(() => {
                 setLoading(false);
                 setEditSuccessOpen(true);
@@ -147,35 +142,8 @@ export function EditItemDialog({ token, setEditSuccessOpen, refreshItems }) {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                required
-                                margin="dense"
-                                id="image"
-                                label="Image URL"
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                                helperText="Image URL for the item. This must be a direct link to the image. You can use a service like Imgur to host your images."
-                                value={image}
-                                disabled={loading}
-                                onChange={(e) => setImage(e.target.value)}
-                            />
-                        </Grid>
-
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                id="additionalImages"
-                                label="Additional Images Album Link"
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                                helperText="Link to external album for additional images. This does not need to be a direct link to an image."
-                                value={additionalImages}
-                                disabled={loading}
-                                onChange={(e) => setAdditionalImages(e.target.value)}
-                            />
+                        <Grid item xs={12}>
+                            <FileUploadDropzone image={image} setImage={setImage} />
                         </Grid>
 
                         <Grid item xs={12}>
