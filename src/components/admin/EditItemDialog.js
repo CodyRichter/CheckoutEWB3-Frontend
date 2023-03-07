@@ -16,7 +16,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { isEmpty } from "lodash";
+import { has, isEmpty } from "lodash";
 import React from "react";
 import Network from "../../utils/network";
 import { useNavigate, useParams } from "react-router-dom";
@@ -46,10 +46,11 @@ export function EditItemDialog({ token, setEditSuccessOpen, refreshItems }) {
                 .then((item) => {
                     setItemDescription(item["description"]);
                     setTags(item["tags"]);
-                    setBidsPlaced(item["bids_placed"]);
-                    setBid(item["bid"]);
+                    setBidsPlaced(has(item, "winning_bid") && !isEmpty(item["winning_bid"]));
+                    setBid(item["original_bid"]);
                 })
                 .catch((e) => {
+                    console.error(e);
                     setErrorMessages(["Unable to load item from server!"]);
                 })
                 .finally(() => {

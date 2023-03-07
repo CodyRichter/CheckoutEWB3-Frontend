@@ -373,7 +373,6 @@ class Network {
     });
 
     if (!isEmpty(image)) {
-      console.log(image);
       formData.append("image", image);
     }
 
@@ -417,7 +416,6 @@ class Network {
     });
 
     if (!isEmpty(image)) {
-      console.log(image);
       formData.append("image", image);
     }
 

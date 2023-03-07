@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { isEmpty } from "lodash";
+import { has, isEmpty } from "lodash";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Network from "../utils/network";
@@ -47,10 +47,10 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
       Network.getItem(itemName)
         .then((item) => {
           setCurrentItem(item);
-          if (item.bids_placed) {
-            setBidAmount(item["bid"] + defaultBidDelta);
+          if (has(item, "winning_bid") && !isEmpty(item["winning_bid"])) {
+            setBidAmount(item["winning_bid"]["bid"] + defaultBidDelta);
           } else {
-            setBidAmount(item["bid"]);
+            setBidAmount(item["original_bid"]);
           }
         })
         .catch((e) => {
@@ -127,10 +127,14 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
               </DialogContentText>
               <Divider />
               <Typography style={{ marginTop: "1em" }} variant={"body1"}>
-                Current Bid: ${parseFloat(currentItem["bid"]).toFixed(2)}
+                Current Bid: ${
+                  has(currentItem, "winning_bid") && !isEmpty(currentItem["winning_bid"]) ?
+                    parseFloat(currentItem["winning_bid"]["bid"]).toFixed(2) :
+                    parseFloat(currentItem["original_bid"]).toFixed(2)
+                }
               </Typography>
 
-              {!currentItem["bids_placed"] && (
+              {!Object.keys(currentItem).includes("winning_bid") && (
                 <Typography
                   style={{ marginBottom: "1em", color: "darkgray" }}
                   variant={"body2"}

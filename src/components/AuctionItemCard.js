@@ -11,7 +11,7 @@ import {
     Typography,
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { isEmpty } from "lodash";
+import { has, isEmpty } from "lodash";
 import React from "react";
 import { Edit } from "@mui/icons-material";
 import DeleteItemDialog from "./admin/DeleteItemDialog";
@@ -65,10 +65,14 @@ export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, use
                 </Typography>
 
                 <Typography variant="body1" color="text.secondary">
-                    Current Bid: ${parseFloat(item["bid"]).toFixed(2)}
+                    Current Bid: ${
+                        has(item, "winning_bid") && !isEmpty(item["winning_bid"]) ?
+                            parseFloat(item["winning_bid"]["bid"]).toFixed(2) :
+                            parseFloat(item["original_bid"]).toFixed(2)
+                    }
                 </Typography>
 
-                {!item["bids_placed"] && (
+                {isEmpty(item["winning_bid"]) && (
                     <Typography variant={"body2"} style={{ color: "darkgray" }}>
                         No Bids Placed Yet
                     </Typography>

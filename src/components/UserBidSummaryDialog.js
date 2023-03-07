@@ -90,7 +90,7 @@ export default function UserBidSummaryDialog({
                                         {bids.winning_bids.map((bid, index) => (
                                             <TableRow key={index}>
                                                 <TableCell>{bid["name"]}</TableCell>
-                                                <TableCell>${bid["bid"]}</TableCell>
+                                                <TableCell>${bid["winning_bid"]["bid"]}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -128,7 +128,7 @@ export default function UserBidSummaryDialog({
                                         {bids.losing_bids.map((bid, index) => (
                                             <TableRow key={index}>
                                                 <TableCell>{bid["name"]}</TableCell>
-                                                <TableCell>${bid["bid"]}</TableCell>
+                                                <TableCell>${bid["winning_bid"]["bid"]}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
