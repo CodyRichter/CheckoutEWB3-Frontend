@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, AppBar, Button, ButtonGroup, Grid, Snackbar, SwipeableDrawer, Toolbar, Typography } from "@mui/material";
-import { AddShoppingCart, AppRegistration, ExitToApp, Gavel, Login, Menu, MenuBook } from "@mui/icons-material";
+import { AddShoppingCart, AppRegistration, Book, ExitToApp, Login, Menu, MenuBook } from "@mui/icons-material";
 import LoginDialog from "./auth/LoginDialog";
 import UserBidSummaryDialog from "./UserBidSummaryDialog";
 import { isEmpty } from "lodash";
@@ -8,7 +8,6 @@ import { SignupDialog } from "./auth/SignupDialog";
 import useIsMobile from "../utils/useIsMobile";
 import { CreateItemDialog } from "./admin/CreateItemDialog";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import ToggleBiddingDialog from "./admin/ToggleBiddingDialog";
 
 export default function WebsiteHeader({
     token,
@@ -78,10 +77,10 @@ export default function WebsiteHeader({
                             color="inherit"
                             style={isMobile ? { marginRight: "1em" } : {}}
                             variant={"outlined"}
-                            onClick={() => navigate("/toggle_bidding")}
-                            startIcon={<Gavel />}
+                            onClick={() => navigate("/admin")}
+                            startIcon={<Book />}
                         >
-                            Toggle Bidding
+                            Administration
                         </Button>
 
                         <Button
@@ -135,10 +134,10 @@ export default function WebsiteHeader({
                         color="primary"
                         fullWidth
                         variant="contained"
-                        onClick={() => navigate("/toggle_bidding")}
-                        startIcon={<Gavel />}
+                        onClick={() => navigate("/admin")}
+                        startIcon={<Book />}
                     >
-                        Toggle Bidding
+                        Administration
                     </Button>
                 )}
             </Grid>
@@ -235,13 +234,6 @@ export default function WebsiteHeader({
                     element={<LoginDialog
                         updateAndSaveToken={updateAndSaveToken}
                     />}
-                />
-            </Routes>
-
-            <Routes>
-                <Route
-                    path="toggle_bidding"
-                    element={<ToggleBiddingDialog token={token} userProfile={userProfile} />}
                 />
             </Routes>
 

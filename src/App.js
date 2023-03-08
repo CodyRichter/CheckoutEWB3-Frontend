@@ -5,9 +5,15 @@ import { isEmpty } from "lodash";
 import Network from "./utils/network";
 import {
     createHashRouter,
+    Route,
     RouterProvider,
+    Routes,
 } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage";
+import Summary from "./pages/Summary";
+import Codes from "./pages/Codes";
+import Admin from "./pages/Admin";
+import AdminHeader from "./components/AdminHeader";
 
 const empty_profile = {
     first_name: "Expired Account.",
@@ -61,8 +67,27 @@ function App() {
         {
             path: "*",
             element: <>
-                <WebsiteHeader token={token} updateAndSaveToken={updateAndSaveToken} userProfile={userProfile} refreshItems={refreshItems} />
-                <Main token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
+                <Routes>
+
+                    <Route path="/summary" element={<>
+                        <AdminHeader exitURL="/#/admin" pageName="Bidding Summary" exitPageName="Admin Page" />
+                        <Summary token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
+                    </>} />
+                    <Route path="/generate-codes" element={<>
+                        <AdminHeader exitURL="/#/admin" pageName="Item Cards" exitPageName="Admin Page" />
+                        <Codes token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
+                    </>} />
+                    <Route path="/admin" element={<>
+                        <AdminHeader exitURL="/#/" pageName="Administration" exitPageName="Home Page" />
+                        <Admin token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
+                    </>} />
+                    <Route path="/*" element={
+                        <>
+                            <WebsiteHeader token={token} updateAndSaveToken={updateAndSaveToken} userProfile={userProfile} refreshItems={refreshItems} />
+                            <Main token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
+                        </>
+                    } />
+                </Routes>
             </>,
             errorElement: <ErrorPage />,
         },
