@@ -1,12 +1,14 @@
 import { ArrowBack } from "@mui/icons-material";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import useIsMobile from "../utils/useIsMobile";
 
 export default function AdminHeader({ pageName, exitURL, exitPageName }) {
 
     const isMobile = useIsMobile();
 
+    const navigate = useNavigate();
     return (
         <AppBar position="static">
             <Toolbar>
@@ -14,7 +16,7 @@ export default function AdminHeader({ pageName, exitURL, exitPageName }) {
                     size="large"
                     color="warning"
                     variant="contained"
-                    href={exitURL}
+                    onClick={() => navigate(exitURL)}
                     sx={{ mr: 2 }}
                     startIcon={<ArrowBack />}
                 >

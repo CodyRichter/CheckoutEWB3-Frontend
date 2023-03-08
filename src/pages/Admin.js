@@ -2,6 +2,7 @@ import { Launch } from "@mui/icons-material";
 import { Alert, Button, Card, Divider, FormControlLabel, Grid, Switch, Typography } from "@mui/material";
 import { has, isEmpty } from "lodash";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Network from "../utils/network";
 
 
@@ -9,6 +10,8 @@ export default function Admin({ token, userProfile, refreshItems, refreshItemTok
 
     const [isBiddingOpen, setIsBiddingOpen] = useState(false);
     const [toggleError, setToggleError] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         Network.getBiddingEnabled().then((is_enabled) => {
@@ -102,7 +105,7 @@ export default function Admin({ token, userProfile, refreshItems, refreshItemTok
                     </Grid>
 
                     <Grid item xs={12} md={6} textAlign='center'>
-                        <Button variant="contained" color="primary" href="/#/summary" startIcon={<Launch />}>
+                        <Button variant="contained" color="primary" onClick={() => navigate('/summary')} startIcon={<Launch />}>
                             View Summary
                         </Button>
                     </Grid>
@@ -123,7 +126,7 @@ export default function Admin({ token, userProfile, refreshItems, refreshItemTok
                     </Grid>
 
                     <Grid item xs={12} md={6} textAlign='center'>
-                        <Button variant="contained" color="primary" href="/#/generate-codes" startIcon={<Launch />}>
+                        <Button variant="contained" color="primary" onClick={() => navigate('/generate-codes')} startIcon={<Launch />}>
                             View Cards
                         </Button>
                     </Grid>

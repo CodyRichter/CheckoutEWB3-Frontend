@@ -70,15 +70,15 @@ function App() {
                 <Routes>
 
                     <Route path="/summary" element={<>
-                        <AdminHeader exitURL="/#/admin" pageName="Bidding Summary" exitPageName="Admin Page" />
+                        <AdminHeader exitURL="/admin" pageName="Bidding Summary" exitPageName="Admin Page" />
                         <Summary token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
                     </>} />
                     <Route path="/generate-codes" element={<>
-                        <AdminHeader exitURL="/#/admin" pageName="Item Cards" exitPageName="Admin Page" />
+                        <AdminHeader exitURL="/admin" pageName="Item Cards" exitPageName="Admin Page" />
                         <Codes token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
                     </>} />
                     <Route path="/admin" element={<>
-                        <AdminHeader exitURL="/#/" pageName="Administration" exitPageName="Home Page" />
+                        <AdminHeader exitURL="/" pageName="Administration" exitPageName="Home Page" />
                         <Admin token={token} userProfile={userProfile} refreshItems={refreshItems} refreshItemToken={refreshItemToken} />
                     </>} />
                     <Route path="/*" element={
