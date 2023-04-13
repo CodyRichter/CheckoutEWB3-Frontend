@@ -6,9 +6,8 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
-  DialogTitle,
   Divider,
+  Grid,
   InputAdornment,
   LinearProgress,
   TextField,
@@ -127,21 +126,81 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen, refreshIte
           )
         ) : (
           <>
-            <DialogTitle id="form-dialog-title">
-              {currentItem["name"]}
-            </DialogTitle>
+
+            <Typography className="mt-4" variant="h6" align="center">
+              Auction Item
+            </Typography>
+            <Typography variant="h4" align="center">{currentItem["name"]}</Typography>
+
             <DialogContent>
-              <DialogContentText>
-                {currentItem["description"]}
-              </DialogContentText>
-              <Divider />
-              <Typography style={{ marginTop: "1em" }} variant={"body1"}>
-                Current Bid: ${
+
+              <Divider className="mb-2" />
+
+              <Typography variant="h6" align="center">Description</Typography>
+              <Typography variant="body1" align="center">{currentItem["description"]}</Typography>
+
+
+              <Divider className="mt-2 mb-2" />
+
+              <Typography variant="h6" component='div' align="center">
+                {
+                  has(currentItem, "winning_bid") && !isEmpty(currentItem["winning_bid"]) ?
+                    "Current Bid" :
+                    "Starting Bid"
+                }
+              </Typography>
+              <Typography variant="h4" component='div' align="center">
+                ${
                   has(currentItem, "winning_bid") && !isEmpty(currentItem["winning_bid"]) ?
                     parseFloat(currentItem["winning_bid"]["bid"]).toFixed(2) :
                     parseFloat(currentItem["original_bid"]).toFixed(2)
                 }
               </Typography>
+
+              <Divider className="mt-2 mb-2" />
+
+              <Typography variant="h6" component='div' align="center" className="mb-3">
+                Place New Bid
+              </Typography>
+
+              <Grid container alignItems="center" justifyContent="center">
+                <Grid item xs={2}>
+                  <TextField
+                    autoFocus
+                    variant="standard"
+                    id="newBid"
+                    label="Bid Amount"
+                    value={bidAmount}
+                    type="text"
+                    fullWidth
+                    onKeyDown={bidOnEnterPress}
+                    onChange={(e) => setBidAmount(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AttachMoney fontSize={"small"} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    disabled={isEmpty(token)}
+                    error={isEmpty(token) || !isEmpty(bidError)}
+                  />
+                </Grid>
+                {(isEmpty(token) || !isEmpty(bidError)) &&
+                  <Grid item xs={12}>
+                    <Typography variant="body2" align="center" color="error">
+                      {isEmpty(token)
+                        ? "Please login to place bid."
+                        : isEmpty(bidError)
+                          ? ""
+                          : bidError
+                      }
+                    </Typography>
+                  </Grid>
+                }
+              </Grid>
+
+
 
               {!Object.keys(currentItem).includes("winning_bid") && (
                 <Typography
@@ -152,32 +211,7 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen, refreshIte
                 </Typography>
               )}
 
-              <TextField
-                autoFocus
-                margin="dense"
-                id="newBid"
-                label="Place New Bid"
-                value={bidAmount}
-                type="text"
-                onKeyDown={bidOnEnterPress}
-                onChange={(e) => setBidAmount(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AttachMoney fontSize={"small"} />
-                    </InputAdornment>
-                  ),
-                }}
-                disabled={isEmpty(token)}
-                error={isEmpty(token) || !isEmpty(bidError)}
-                helperText={
-                  isEmpty(token)
-                    ? "Please login to place bid."
-                    : isEmpty(bidError)
-                      ? ""
-                      : bidError
-                }
-              />
+
             </DialogContent>
           </>
         )}
@@ -196,7 +230,7 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen, refreshIte
 
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog >
     </>
   );
 }
