@@ -164,7 +164,7 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen, refreshIte
               </Typography>
 
               <Grid container alignItems="center" justifyContent="center">
-                <Grid item xs={2}>
+                <Grid item xs={6}>
                   <TextField
                     autoFocus
                     variant="standard"
