@@ -107,6 +107,24 @@ export default function Codes({ token, userProfile, refreshItems, refreshItemTok
                 </Grid>
             }
 
+            <Grid item xs={12} textAlign='center' className='m-3 pb-3'>
+                <Card className="pt-3 pb-3">
+                    <QRCode
+                        value={"https://ewbauction.online/#/register"}
+                        qrStyle='dots'
+                        eyeRadius={5}
+                        logoWidth={35}
+                        logoHeight={35}
+                        logoOpacity={0.6}
+                        ecLevel='H'
+                        removeQrCodeBehindLogo={true}
+                        logoImage={gavelB64}
+                        bgColor='#f5f7fb'
+                    />
+                </Card>
+            </Grid>
+
+
             <Grid item xs={10} textAlign='center' className='m-3 pb-3'>
                 {items.map((item, index) => (
                     <div className={index % numCards === 0 ? 'pagebreak' : ''}>
