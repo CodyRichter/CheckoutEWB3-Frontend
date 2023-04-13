@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { has, isEmpty } from "lodash";
-import React from "react";
+import React, { memo } from "react";
 import { Edit } from "@mui/icons-material";
 import DeleteItemDialog from "./admin/DeleteItemDialog";
 import { EditItemDialog } from "./admin/EditItemDialog";
@@ -20,7 +20,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Blurhash } from "react-blurhash";
 
-export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token, refreshItems }) {
+function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token, refreshItems }) {
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
     const [editItemSuccessOpen, setEditItemSuccessOpen] = React.useState(false);
@@ -150,3 +150,5 @@ export default function AuctionItemCard({ item, selectItemToOpen, bidStatus, use
         </Card>
     );
 }
+
+export default memo(AuctionItemCard);

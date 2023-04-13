@@ -1,7 +1,7 @@
 import { get, has, isEmpty } from "lodash";
 
-const API_ROOT = "https://checkout-ewb.herokuapp.com/";
-// const API_ROOT = "http://localhost:4250/";
+// const API_ROOT = "https://checkout-ewb.herokuapp.com/";
+const API_ROOT = "http://localhost:4250/";
 
 class Network {
   static async login(username, password) {
@@ -137,6 +137,43 @@ class Network {
       .then((data) => {
         if (has(data, "winning_bids") && has(data, "losing_bids")) {
           return data;
+        } else {
+          throw new Error(
+            "Server responded with invalid data. Please try again later."
+          );
+        }
+      })
+      .catch((error) => {
+        if (error.message.toLowerCase().includes("load failed")) {
+          throw new Error(
+            "Unable to connect to server. Please try again later."
+          );
+        } else {
+          throw error;
+        }
+      });
+  }
+
+  static async getWinningBids(token) {
+    return fetch(API_ROOT + "bids/winner", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 401) {
+          throw new Error("Invalid Credentials. Please log out and back in.");
+        } else if (response.status >= 500) {
+          throw new Error(
+            "Server is unable to handle request. Please try again later."
+          );
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (has(data, "winning_bids")) {
+          return data['winning_bids'];
         } else {
           throw new Error(
             "Server responded with invalid data. Please try again later."
