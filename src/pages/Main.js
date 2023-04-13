@@ -129,7 +129,7 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
                     <Grid item xs={12} className="mt-2">
                         <Card className="p-3">
                             <Typography variant="h4" fontWeight={400}>
-                                View the Auction Tutorial: <a href="https://ewb-auction-images-prod.s3.amazonaws.com/Hybrid+Auction+Guide.pdf" target="_blank">Click Here</a>
+                                View the Auction Tutorial: <a href="https://ewb-auction-images-prod.s3.amazonaws.com/Hybrid+Auction+Guide.pdf" target="_blank" rel="noreferrer">Click Here</a>
                             </Typography>
                         </Card>
                     </Grid>
