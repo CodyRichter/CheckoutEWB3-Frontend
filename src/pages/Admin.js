@@ -52,7 +52,7 @@ export default function Admin({ token, userProfile, refreshItems, refreshItemTok
                 csvContent += "\n";
                 csvContent += csvClean(winningBid["item_name"]) + "," + winningBid["winning_bid"] + "," + csvClean(winningBid["email"]) + "," + csvClean(winningBid["first_name"]) + "," + csvClean(winningBid["last_name"]);
             });
-            console.log(csvContent);
+
             var encodedUri = encodeURI(csvContent);
             var link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -184,6 +184,14 @@ export default function Admin({ token, userProfile, refreshItems, refreshItemTok
                             {loadingWinningBids ? <CircularProgress size={24} /> : "Export"}
                         </Button>
                     </Grid>
+
+                    {!isEmpty(winningBidError) && (
+                        <Grid item xs={12} textAlign='center'>
+                            <Typography variant="body1" color="error" className="mt-2">
+                                {winningBidError}
+                            </Typography>
+                        </Grid>
+                    )}
                 </Grid>
             </Grid>
 

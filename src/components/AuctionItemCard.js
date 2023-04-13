@@ -7,23 +7,25 @@ import {
     CardContent,
     CardMedia,
     Divider,
-    Snackbar,
     Typography,
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { has, isEmpty } from "lodash";
+import { has, isEmpty, isEqual } from "lodash";
 import React, { memo } from "react";
 import { Edit } from "@mui/icons-material";
 import DeleteItemDialog from "./admin/DeleteItemDialog";
-import { EditItemDialog } from "./admin/EditItemDialog";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Blurhash } from "react-blurhash";
 
-function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token, refreshItems }) {
+function AuctionItemCard({ item, selectItemToOpen, bidStatus = undefined, userProfile, token, refreshItems }) {
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
-    const [editItemSuccessOpen, setEditItemSuccessOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        console.log("Item card updated");
+    }, [item, selectItemToOpen, bidStatus, userProfile, token, refreshItems]);
+
     const navigate = useNavigate();
 
     function truncateString(str, num) {
@@ -38,7 +40,7 @@ function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token
     }
 
     function selectItemToEdit() {
-        navigate(`/items/${item["name"]}/edit`);
+        navigate(`/edit_item/${item["name"]}`);
     }
 
     return (
@@ -49,7 +51,7 @@ function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token
                         src={item["image"]}
                         alt={item["description"]}
                         width="100%"
-                        height="auto"
+                        height="300px"
                         key={item["image_placeholder"]}
                         placeholder={<Blurhash
                             hash={item["image_placeholder"]}
@@ -123,32 +125,11 @@ function AuctionItemCard({ item, selectItemToOpen, bidStatus, userProfile, token
 
                 <DeleteItemDialog open={deleteConfirmOpen} setOpen={setDeleteConfirmOpen} itemName={item.name} token={token} refreshItems={refreshItems} />
 
-
-                <Routes>
-                    <Route
-                        path="items/:itemName/edit"
-                        element={<EditItemDialog setEditSuccessOpen={setEditItemSuccessOpen} token={token} refreshItems={refreshItems} />}
-                    />
-                </Routes>
-
-                <Snackbar
-                    open={editItemSuccessOpen}
-                    autoHideDuration={6000}
-                    onClose={() => setEditItemSuccessOpen(false)}
-                    anchorOrigin={{ horizontal: "center", vertical: "top" }}
-                >
-                    <Alert
-                        onClose={() => setEditItemSuccessOpen(false)}
-                        severity="success"
-                        sx={{ width: "100%" }}
-                    >
-                        Auction item edited successfully!
-                    </Alert>
-                </Snackbar>
-
             </CardActions>
         </Card>
     );
 }
 
-export default memo(AuctionItemCard);
+export default memo(AuctionItemCard, (prevProps, nextProps) => {
+    return isEqual(prevProps.item, nextProps.item) && isEqual(prevProps.bidStatus, nextProps.bidStatus) && isEqual(prevProps.token, nextProps.token);
+});

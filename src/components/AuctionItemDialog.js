@@ -2,6 +2,7 @@ import { AttachMoney } from "@mui/icons-material";
 import {
   Alert,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,12 +19,14 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Network from "../utils/network";
 
-export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
+export default function AuctionItemDialog({ token, setSuccessTagOpen, refreshItems }) {
   const [currentItem, setCurrentItem] = React.useState(null);
   const [bidAmount, setBidAmount] = React.useState("0");
 
   const [loading, setLoading] = React.useState(true);
   const [itemLoadError, setItemLoadError] = React.useState("");
+
+  const [bidButtonLoading, setBidButtonLoading] = React.useState(false);
 
   const [defaultBidDelta, setDefaultBidDelta] = React.useState(0);
 
@@ -67,16 +70,21 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
   }
 
   function placeBid() {
+    setBidButtonLoading(true);
+
     const bidAmountFloat = parseFloat(bidAmount);
 
     if (isNaN(bidAmountFloat)) {
       setBidError("Unable to place bid. Please ensure bid is a valid number.");
+      setBidButtonLoading(false);
       return;
     }
 
     Network.placeBid(itemName, bidAmountFloat, token)
       .then((bidInfo) => {
         setSuccessTagOpen(true);
+        refreshItems();
+        setBidButtonLoading(false);
         closeDialog();
       })
       .catch((e) => {
@@ -91,6 +99,7 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
           })
           .finally(() => {
             setLoading(false);
+            setBidButtonLoading(false);
           });
       });
   }
@@ -181,9 +190,10 @@ export default function AuctionItemDialog({ token, setSuccessTagOpen }) {
             onClick={placeBid}
             color="primary"
             variant="contained"
-            disabled={isEmpty(token)}
+            disabled={isEmpty(token) || bidButtonLoading}
           >
-            Bid
+            {bidButtonLoading ? <CircularProgress size={24} /> : "Place Bid"}
+
           </Button>
         </DialogActions>
       </Dialog>
