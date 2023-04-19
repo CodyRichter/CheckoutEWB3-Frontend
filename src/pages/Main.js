@@ -20,9 +20,13 @@ import AuctionItemCard from "../components/AuctionItemCard";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import { EditItemDialog } from "../components/admin/EditItemDialog";
+import ServerNotRunningPage from "./ServerNotRunningPage";
 
 export default function Main({ token, refreshItems, refreshItemToken, userProfile }) {
     const [loadingItems, setLoadingItems] = useState(true);
+    const [loadingItemError, setLoadingItemError] = useState(false);
+
+
     let [items, setItems] = useState([]);
 
     let [tags, setTags] = useState([]);
@@ -33,6 +37,7 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
     let [bidStatus, setBidStatus] = useState({});
 
     let [isBiddingOpen, setIsBiddingOpen] = useState(false);
+
 
     // Item Dialog State
     const [editItemSuccessOpen, setEditItemSuccessOpen] = React.useState(false);
@@ -88,6 +93,11 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
             let uniqueTagsFromItems = Array.from(new Set([].concat.apply([], x)));
             setTags(uniqueTagsFromItems);
             setLoadingItems(false);
+            setLoadingItemError(false);
+        }).catch((e) => {
+            console.error(e);
+            setLoadingItems(false);
+            setLoadingItemError(true);
         });
     }, [refreshItemToken]);
 
@@ -110,7 +120,8 @@ export default function Main({ token, refreshItems, refreshItemToken, userProfil
         return searchTags.every((r) => item.tags.includes(r));
     }
 
-    return (
+
+    return loadingItemError ? <ServerNotRunningPage /> : (
         <Container>
 
             {loadingItems &&
